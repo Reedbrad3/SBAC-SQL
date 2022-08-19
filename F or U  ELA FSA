@@ -1,0 +1,22 @@
+#F or U  ELA
+select distinct
+  r.entityID,
+  s.[school-name],
+  g.grade,
+  r.studentID
+from
+  ala_roster_history r
+  join school        s on s.[school-id] = r.entityID
+  join [student-ew]      e on e.[student-id] = r.studentID and e.[withdrawal-school-year]= 2022 and e.[entity-id] = r.entityID
+  join [ent-grd-gy-xref] g on  g.[school-year] = 2022 and g.[grad-yr] = cast(e.[withdrawal-grad-yr] as int)
+
+where
+  r.schoolYear = 2022
+  and (r.q1 in ('F','U') or r.q2 in ('F','U') or r.q3 in ('F','U') or r.q4 in ('F','U') or r.sem1Grade = 'F' or r.sem2Grade = 'F')
+  and r.stateCode in ('5010041','5010042','5010043','5010044','5010045','5010046','1001010','1001020','1001040',
+                      '1001050','1001070','1001080','1001310','1001320','1001340','1001350','1001370','1001380')
+group by
+  r.entityID,
+  s.[school-name],
+  g.grade,
+  r.studentID
