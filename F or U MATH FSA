@@ -1,0 +1,22 @@
+#F or U MATH
+select distinct
+  r.entityID,
+  s.[school-name],
+  g.grade,
+  count(distinct r.studentID) as 'count'
+from
+  ala_roster_history     r
+  join school            s on s.[school-id] = r.entityID
+  join [student-ew]      e on e.[student-id] = r.studentID and e.[withdrawal-school-year]= 2022 and e.[entity-id] = r.entityID
+  join [ent-grd-gy-xref] g on  g.[school-year] = 2022 and g.[grad-yr] = cast(e.[withdrawal-grad-yr] as int)
+
+where
+  r.schoolYear = 2022
+  and (r.q1 in ('F','U') or r.q2 in ('F','U') or r.q3 in ('F','U') or r.q4 in ('F','U') or r.sem1Grade = 'F' or r.sem2Grade = 'F')
+  and stateCode in ('5012020','5012030','5012040','5012050','5012060','5012070','1205010','1205020','1205040','1205050',
+                    '1205070','1200310','1200320','1200330','1200340','1206310','1206320','1206300','1207300')
+group by
+  r.entityID,
+  s.[school-name],
+  g.grade,
+  r.studentID
