@@ -1,0 +1,19 @@
+#aleast one ISS or OSS
+select distinct
+  b.entityID,
+  s.[school-name],
+  b.grade,
+  b.studentID
+from
+  ala_behavior b
+  join school  s on s.[school-id] = b.entityID
+where
+  b.schoolyear = 2022
+--and entityID = '0121'
+  and b.disActionID in ('ISS','OSS')
+  and b.[off-ref] = 'Offense'
+group by
+  b.entityID,
+  s.[school-name],
+  b.grade,
+  b.studentID
