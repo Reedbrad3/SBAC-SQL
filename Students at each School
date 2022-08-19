@@ -1,0 +1,13 @@
+#Number of Students at each school
+select distinct
+  entityID,
+  entityName,
+  grade,
+  count(distinct studentID) as 'count'
+from
+  ala_ActiveStudents_2122_eoy
+group by
+  entityID,
+  entityName,
+  grade,
+  studentID
