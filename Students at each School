@@ -1,4 +1,4 @@
-- Display the number of students at each school and within each grade
+--Display the number of students at each school and within each grade
 select distinct
   entityID,
   entityName,
