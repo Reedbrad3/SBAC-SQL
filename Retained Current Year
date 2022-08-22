@@ -1,0 +1,17 @@
+select distinct
+  e.[entity-id],
+  l.[school-name],
+  g.grade,
+  count(distinct e.[student-id]) as 'count'
+from
+  [student-ew]           e
+  join [ent-grd-gy-xref] g on  g.[school-year] = 2022 and g.[grad-yr] = cast(e.[withdrawal-grad-yr] as int)
+  join school            l on l.[school-id] = e.[entity-id]
+where
+  e.[promote-status] = 'R'
+  and e.[withdrawal-school-year] = 2022
+  and e.[x-withdrawal-default-entity] = 1
+group by
+  e.[entity-id],
+  l.[school-name],
+  g.grade
