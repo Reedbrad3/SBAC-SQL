@@ -1,0 +1,15 @@
+select distinct
+  a.[student-id],
+  a.[entity-id],
+  a.[withdrawal-school-year],
+  a.[withdrawal-grad-yr],
+  g.grade
+from
+  [student-ew]            a
+join [ent-grd-gy-xref] g on  g.[school-year] = a.[withdrawal-school-year] and g.[grad-yr] = cast(a.[withdrawal-grad-yr] as int)
+group by
+  a.[student-id],
+  a.[entity-id],
+  a.[withdrawal-school-year],
+  a.[withdrawal-grad-yr],
+  g.grade
