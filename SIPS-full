@@ -1,4 +1,4 @@
---The goal of the SQL is to pull all parts of the sips plan (A,B,C). This is a combination report to get all the information as cleanly and quickly as possible. 
+--The goal of the SQL is to pull parts of the sips plan (A,C). This is a combination report to get all the information as cleanly and quickly as possible. 
 
 --Count of Students
 select distinct
@@ -12,7 +12,10 @@ select distinct
   sum(distinct b.[attendance-days]+b.[absence-days]) as 'tot',
   count(distinct c.studentID) as 'Suspensions',
   count(distinct f.studentID) as 'F_ELA',
-  count(distinct g.studentID) as 'F_MATH'
+  count(distinct g.studentID) as 'F_MATH',
+  count(distinct h.studentID) as 'FSA_ELA_1',
+  count(distinct i.studentID) as 'FSA_MATH_1',
+  count(distinct j.studentID) as 'Repeat_Current_Year'
 from
   ala_activeStudents            a
   join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-school-year] = 2022
@@ -25,6 +28,9 @@ from
   left join ala_roster_history g on g.studentID = a.studentID and g.schoolYear = 2022 and (g.sem1Grade = 'F' or g.sem2Grade = 'F')
   and g.stateCode in ('5012020','5012030','5012040','5012050','5012060','5012070','1205010','1205020','1205040','1205050',
                     '1205070','1200310','1200320','1200330','1200340','1206310','1206320','1206300','1207300')
+  left join ala_testScore h on h.studentID = a.studentID and h.testName = 'FSA ELA' and h.date between '2022-04-01' and '2022-06-30' and h.AL = '1'
+  left join ala_testScore i on i.studentID = a.studentID and i.testName = 'FSA Math' and i.date between '2022-05-01' and '2022-06-30' and i.AL = '1'
+  left join ala_activeStudents_2122_eoy j on j.studentID = a.studentID and j.grade = a.grade
 group by
   a.studentID,
   a.otherID,
