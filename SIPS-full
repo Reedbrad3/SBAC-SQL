@@ -10,8 +10,8 @@ select distinct
   sum(distinct b.[attendance-days]) as 'att',
   sum(distinct b.[absence-days]) as 'abs',
   sum(distinct b.[attendance-days]+b.[absence-days]) as 'tot',
-  count(c.studentID) as 'Suspensions',
-  count(f.studentID) as 'F_ELA'
+  count(distinct c.studentID) as 'Suspensions',
+  count(distinct f.studentID) as 'F_ELA'
  
 from
   ala_activeStudents            a
