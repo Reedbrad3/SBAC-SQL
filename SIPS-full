@@ -7,7 +7,9 @@ select distinct
   a.entityID,
   a.grade,
   b.[withdrawal-school-year],
-  b.[attendance-days],
+  sum(distinct b.[attendance-days]) as 'att',
+  sum(distinct b.[absence-days]) as 'abs',
+  sum(distinct b.[attendance-days]+b.[absence-days]) as 'tot',
   count(c.studentID) as 'Suspensions',
   count(f.studentID) as 'F_ELA'
  
@@ -25,5 +27,4 @@ group by
   a.otherID,
   a.entityID,
   a.grade,
-  b.[withdrawal-school-year],
-  b.[attendance-days]
+  b.[withdrawal-school-year]
