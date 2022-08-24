@@ -1,0 +1,73 @@
+declare @schlYear int = 2022
+
+declare @table table
+  (
+    entityID   varchar(4),
+    studentID  int,
+    otherID    varchar(10),
+    lastName   varchar(30),
+    firstName  varchar(30),
+    entryDate  date,
+    wdDate     date,
+    absences   int,
+    schlDays   int
+  )
+
+insert into
+  @table
+select distinct
+  ew.[entity-id],
+  ew.[student-id],
+  s.[other-id],
+  n.[last-name],
+  n.[first-name],
+  cast(ew.[ew-date] as date),
+  cast(coalesce(dateadd(DD, 1,ew.[withdrawal-date]),getdate()) as date),
+
+  (select
+     count(distinct [date])
+   from
+     ala_attendanceDaily
+   where
+     schoolYear = @schlYear
+     and studentID = ew.[student-id]
+     and entityID = ew.[entity-id]
+     and [date] between cast(ew.[ew-date] as date) and cast(coalesce(dateadd(DD, 1,ew.[withdrawal-date]),getdate()) as date)
+     and dayStatus in ('B','C','D','E','H','P','Q','S','U','X','Y','Z')),
+ 
+    (select
+       count(distinct [cal-date])
+     from
+       [calendar-day]
+     where
+       [entity-id] = ew.[entity-id]
+       and [cal-days] = 1.00
+       and [cal-date] between cast(ew.[ew-date] as date) and cast(coalesce(dateadd(DD, 1,ew.[withdrawal-date]),getdate()) as date))
+
+from
+  [student-ew]           ew
+  join student            s on s.[student-id] = ew.[student-id]
+  join [name]             n on n.[name-id] = s.[name-id]
+--join [ent-grd-gy-xref]  g on g.[school-year] = @schlYear and g.[grad-yr] = cast(ew.[withdrawal-grad-yr] as int)
+where
+  ew.[withdrawal-school-year] = @schlYear
+  and ew.[entity-id] = '0431'
+  and ew.[x-withdrawal-default-entity] = 1
+
+--select * from @table
+
+select distinct
+  otherID,
+  lastName,
+  firstName,
+        round((cast(sum(absences) as float) / cast(sum(schlDays) as float) * 100),2) as 'pctAbs',
+  100 - round((cast(sum(absences) as float) / cast(sum(schlDays) as float) * 100),2) as 'pctAtt'
+
+from
+  @table
+group by
+  otherID,
+  lastName,
+  firstName
+having
+  round((cast(sum(absences) as float) / cast(sum(schlDays) as float) * 100),2) > 10
