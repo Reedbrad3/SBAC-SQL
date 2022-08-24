@@ -19,7 +19,6 @@ from
   ala_activeStudents            a
   join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-school-year] = 2022
   left join ala_behavior c on  c.studentID    = a.studentID and c.schoolYear = 2022 and c.disActionID in ('ISS','OSS')
-  left join [student-ew] e on e.[student-id] = a.studentID and e.[withdrawal-school-year] = 2022
   left join ala_roster_history f on f.studentID = a.studentID and f.schoolYear = 2022 and (f.sem1Grade = 'F' or f.sem2Grade = 'F')
   and f.stateCode in ('5010041','5010042','5010043','5010044','5010045','5010046','1001010','1001020','1001040',
                       '1001050','1001070','1001080','1001310','1001320','1001340','1001350','1001370','1001380')
