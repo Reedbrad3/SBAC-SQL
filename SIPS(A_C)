@@ -3,7 +3,6 @@ select distinct
   a.studentID,
   a.otherID,
   a.entityID,
-  a.grade,
   b.[withdrawal-school-year],
   sum(distinct b.[attendance-days]) as 'att',
   sum(distinct b.[absence-days]) as 'abs',
@@ -14,7 +13,9 @@ select distinct
   count(distinct h.studentID) as 'FSA_ELA_1',
   count(distinct i.studentID) as 'FSA_MATH_1',
   count(distinct j.studentID) as 'Repeat_Current_Year',
-  count(distinct k.[withdrawal-grad-yr]) as 'Repeat_Multi_Year'
+  count(distinct k.[withdrawal-grad-yr]) as 'Repeat_Multi_Year',
+  k.[withdrawal-grad-yr],
+  l.grade
 from
   ala_activeStudents            a
   left join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-school-year] = 2022
@@ -29,10 +30,11 @@ from
   left join ala_testScore i on i.studentID = a.studentID and i.testName = 'FSA Math' and i.date between '2022-05-01' and '2022-06-30' and i.AL = '1'
   left join ala_activeStudents_2122_eoy j on j.studentID = a.studentID and j.grade = a.grade
   left join [student-ew] k on k.[student-id] = a.studentID and k.[withdrawal-grad-yr] = k.[withdrawal-grad-yr]
-
+  left join [ent-grd-gy-xref] l on l.[school-year]=k.[withdrawal-school-year] and l.[grad-yr]= cast(k.[withdrawal-grad-yr]as int) and l.grade<>'GD'
 group by
   a.studentID,
   a.otherID,
   a.entityID,
-  a.grade,
-  b.[withdrawal-school-year]
+  b.[withdrawal-school-year],
+  k.[withdrawal-grad-yr],
+  l.grade
