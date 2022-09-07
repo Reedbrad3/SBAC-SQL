@@ -1,0 +1,21 @@
+select distinct
+  a.studentID,
+  a.otherID,
+  a.grade,
+  a.entityID,
+  a.reasonCode,
+  a.raceDescription,
+  b.zoneSchool
+
+from
+  ala_activeStudents a
+  join ala_zoneSchool b on b. studentID = a.studentID
+
+group by
+  a.studentID,
+  a.otherID,
+  a.grade,
+  a.entityID,
+  a.reasonCode,
+  a.raceDescription,
+  b.zoneSchool
