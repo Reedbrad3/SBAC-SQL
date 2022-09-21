@@ -1,6 +1,7 @@
 select distinct
   a.studentID,
   a.Fleid,
+  b.otherID
   b.stateCode,
   b.tchrLastName,
   b.tchrFirstName,
@@ -9,4 +10,4 @@ select distinct
   
 from
   ala_survey2scs2122  a
-  join ala_roster_history b on b.fleID = a.FLEID
+  join ala_roster_history b on b.fleID = a.FLEID and b.schoolYear = 2022
