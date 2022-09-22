@@ -7,7 +7,9 @@ select distinct
   b.tchrFirstName,
   b.tchralphaKey,
   d.ssn,
-  d.localStaffID
+  d.localStaffID,
+  c.entityID,
+  c.grade
 
   
 from
