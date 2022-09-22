@@ -1,47 +1,17 @@
 select distinct
   a.studentID,
-  a.Fleid,
-  a.Entityid, 
-  b.firstName,
-  b.lastName,
-  c.dob,
-  c.grade,
-  c.entityName,
-  b.startTerm,
-  b.sectionNumber,
-  b.Period,
-  b.schedMethod,
-  b.courseID,
-  b.courseSection,
+  a.FLEID,
+  b.otherID,
   b.stateCode,
   b.tchrLastName,
   b.tchrFirstName,
-  b.alphaKey
+  b.tchralphaKey,
+  d.ssn,
+  d.localStaffID
 
   
 from
   ala_survey2scs2122  a
-  join ala_roster_history b on b.studentID = a.studentID
-  join ala_allStudents_2122_eoy    c on c.studentID = a.studentID
- 
-
-
-group by
-    a.studentID,
-  a.Fleid,
-  a.Entityid, 
-  b.firstName,
-  b.lastName,
-  c.dob,
-  c.grade,
-  c.entityName,
-  b.startTerm,
-  b.sectionNumber,
-  b.Period,
-  b.schedMethod,
-  b.courseID,
-  b.courseSection,
-  b.stateCode,
-  b.tchrLastName,
-  b.tchrFirstName,
-  b.alphaKey
+  join ala_roster_history b on b.fleID = a.FLEID and b.schoolYear = '2022' and b.tchrType = 'P'
+  join ala_allStudents_2122_eoy c on c.fleid = a.FLEID and (c.wdDate > '2/11/2022' or c.wdDate IS NULL) and c.entryDate < '2/11/2022'
+  join allStaff d on d.alphaKey = b.tchralphaKey
