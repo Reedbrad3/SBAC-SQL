@@ -1,6 +1,8 @@
 select distinct
   a.studentID,
   a.otherID,
+  a.lastName,
+  a.firstName,
   a.entityName,
   a.grade,
   a.lunchStatus,
