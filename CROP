@@ -2,18 +2,22 @@ select distinct
   a.studentID,
   a.entityName,
   a.grade,
+  a.lunchStatus,
   b.unweightedCumGPA,
   b.weightedCumGPA,
   c.courseName,
   c.sem2Grade,
   c.FG,
   d.[absence-days],
-  d.[attendance-days]
+  d.[attendance-days],
+  e.retained
+  
  
 from
   ala_activeStudents  a 
   left join ala_activeStudents_2122_eoy     b on b.studentID = a.studentID
   left join ala_roster_history    c on c.studentID = a.studentID
   left join [student-ew]          d on d.[student-ID] = a.studentID and [withdrawal-school-year] = 2022
+  left join student               e on e.studentID = a.studentID
 where
   a.grade in ('06','07','08')
