@@ -1,5 +1,6 @@
 select distinct
   a.studentID,
+  a.otherID,
   a.entityName,
   a.grade,
   a.lunchStatus,
@@ -10,7 +11,9 @@ select distinct
   c.FG,
   d.[absence-days],
   d.[attendance-days],
-  e.retained
+  f.disActionTime,
+  g.testName,
+  g.AL
   
  
 from
@@ -18,6 +21,8 @@ from
   left join ala_activeStudents_2122_eoy     b on b.studentID = a.studentID
   left join ala_roster_history    c on c.studentID = a.studentID
   left join [student-ew]          d on d.[student-ID] = a.studentID and [withdrawal-school-year] = 2022
-  left join student               e on e.studentID = a.studentID
+  left join student               e on e.[student-ID] = a.studentID
+  left join ala_behavior          f on f.studentID = a.studentID and f.disActionID in ('ISS','OSS') and f.schoolYear = 2022
+  left join ala_testScore         g on g.studentID = a.studentID and g.grade in ('06','07','08')
 where
   a.grade in ('06','07','08')
