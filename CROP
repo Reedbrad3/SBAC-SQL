@@ -9,13 +9,17 @@ select distinct
   b.unweightedCumGPA,
   b.weightedCumGPA,
   c.courseName,
+  c.courseLevel,
   c.sem2Grade,
   c.FG,
+  c.dept,
+  c.subject,
   d.[absence-days],
   d.[attendance-days],
   f.disActionTime,
   g.testName,
-  g.AL
+  g.date,
+  max(g.al) as 'civmax'
   
  
 from
@@ -25,6 +29,27 @@ from
   left join [student-ew]          d on d.[student-ID] = a.studentID and [withdrawal-school-year] = 2022
   left join student               e on e.[student-ID] = a.studentID
   left join ala_behavior          f on f.studentID = a.studentID and f.disActionID in ('ISS','OSS') and f.schoolYear = 2022
-  left join ala_testScore         g on g.studentID = a.studentID and g.grade in ('06','07','08')
+  left join ala_testScore         g on g.studentID = a.studentID and g.grade in ('06','07','08') and g.testName in ('ECS CIVICS','NGS CIVICS')
 where
   a.grade in ('06','07','08')
+group by
+  a.studentID,
+  a.otherID,
+  a.lastName,
+  a.firstName,
+  a.entityName,
+  a.grade,
+  a.lunchStatus,
+  b.unweightedCumGPA,
+  b.weightedCumGPA,
+  c.courseName,
+  c.courseLevel,
+  c.sem2Grade,
+  c.FG,
+  c.dept,
+  c.subject,
+  d.[absence-days],
+  d.[attendance-days],
+  f.disActionTime,
+  g.testName,
+  g.date
