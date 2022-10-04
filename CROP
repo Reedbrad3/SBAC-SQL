@@ -25,7 +25,7 @@ select distinct
 from
   ala_activeStudents  a 
   left join ala_activeStudents_2122_eoy     b on b.studentID = a.studentID
-  left join ala_roster_history    c on c.studentID = a.studentID
+  left join ala_roster_history    c on c.studentID = a.studentID and c.courseLevel in ('2','3')
   left join [student-ew]          d on d.[student-ID] = a.studentID and [withdrawal-school-year] = 2022
   left join student               e on e.[student-ID] = a.studentID
   left join ala_behavior          f on f.studentID = a.studentID and f.disActionID in ('ISS','OSS') and f.schoolYear = 2022
