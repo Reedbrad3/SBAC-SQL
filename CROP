@@ -18,7 +18,8 @@ select distinct
   c.subject,
   g.testName,
   g.date,
-  max(g.al) as 'civmax'
+  max(g.al) as 'civmax',
+  count(distinct h.date) as 'Days Missed' 
   
  
 from
@@ -29,6 +30,8 @@ from
   left join student               e on e.[student-ID] = a.studentID
   left join ala_behavior          f on f.studentID = a.studentID and f.disActionID in ('ISS','OSS') and f.schoolYear = 2022
   left join ala_testScore         g on g.studentID = a.studentID and g.grade in ('06','07','08') and g.testName in ('ECS CIVICS','NGS CIVICS')
+  left join ala_attendanceDaily   h on h.studentID = a.studentID and h.dayStatus in ('B','C','D','E','H','P','Q','S','U','X','Y','Z') and h.schoolYear = '2023'
+  --Current Year Days Missed
 where
   a.grade in ('06','07','08')
 group by
