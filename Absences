@@ -1,0 +1,25 @@
+select distinct
+  a.studentID,
+  a.otherID,
+  a.lastName,
+  a.firstName,
+  a.entityID,
+  a.entityName,
+  a.grade,
+  h.date
+  
+ 
+from
+  ala_activeStudents  a 
+  left join ala_attendanceDaily   h on h.studentID = a.studentID and h.dayStatus in ('B','C','D','E','H','P','Q','S','U','X','Y','Z') and h.schoolYear = '2022'
+  --Current Year Days Missed
+
+group by
+  a.studentID,
+  a.otherID,
+  a.lastName,
+  a.firstName,
+  a.entityID,
+  a.entityName,
+  a.grade,  
+  h.date
