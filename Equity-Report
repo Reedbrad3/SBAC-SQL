@@ -15,7 +15,10 @@ SELECT
     count(Distinct b1.incidentNo) as 'OSS & ISS',
     c.AL,
     c.testName,
-    c.date
+    c.date,
+    count(distinct d.date) ' absences',
+    e.level,
+    e.testName as 'AIMS'
 
 
 FROM
@@ -23,6 +26,8 @@ ala_activeStudents      a
 left join ala_behavior       b on b.studentID = a.studentID and b.schoolYear = 2023
 left join ala_behavior       b1 on b1.studentID = a.studentID and b1.disActionID in ('OSS','ISS') and b1.schoolYear = 2023 
 left join ala_testScore c on c.studentID = a.studentID and c.date > '08/10/2021'
+left join ala_attendanceDaily d on d.studentID = a.studentID and d.dayStatus in ('B','C','D','E','H','P','Q','S','U','X','Y','Z') and d.schoolYear = '2023'
+left join ala_aims_testScore    e on e.studentID = a.studentID
 
 group by
     a.studentID,
@@ -39,4 +44,6 @@ group by
     a.unweightedCumGPA,
     c.AL,
     c.testName,
-    c.date
+    c.date,
+    e.level,
+    e.testName
