@@ -1,0 +1,35 @@
+SELECT  
+    a.studentID,
+    a.entityID,
+    a.otherID,
+    a.gender,
+    a.grade,
+    a.homeless,
+    a.immStatus,
+    a.migrant,
+    a.lunchStatus,
+    a.priExcepDesc,
+    a.raceDescription,
+    a.unweightedCumGPA,
+    count(Distinct b.incidentNo) as 'Offenses',
+    count(Distinct b1.incidentNo) as 'OSS & ISS'
+   
+
+FROM
+ala_activeStudents      a
+join ala_behavior       b on b.studentID = a.studentID and b.schoolYear = 2023
+join ala_behavior       b1 on b1.studentID = a.studentID and b1.disActionID in ('OSS','ISS') and b1.schoolYear = 2023
+
+group by
+    a.studentID,
+    a.entityID,
+    a.otherID,
+    a.gender,
+    a.grade,
+    a.homeless,
+    a.immStatus,
+    a.migrant,
+    a.lunchStatus,
+    a.priExcepDesc,
+    a.raceDescription,
+    a.unweightedCumGPA
