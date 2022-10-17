@@ -12,13 +12,17 @@ SELECT
     a.raceDescription,
     a.unweightedCumGPA,
     count(Distinct b.incidentNo) as 'Offenses',
-    count(Distinct b1.incidentNo) as 'OSS & ISS'
-   
+    count(Distinct b1.incidentNo) as 'OSS & ISS',
+    c.AL,
+    c.testName,
+    c.date
+
 
 FROM
 ala_activeStudents      a
-join ala_behavior       b on b.studentID = a.studentID and b.schoolYear = 2023
-join ala_behavior       b1 on b1.studentID = a.studentID and b1.disActionID in ('OSS','ISS') and b1.schoolYear = 2023
+left join ala_behavior       b on b.studentID = a.studentID and b.schoolYear = 2023
+left join ala_behavior       b1 on b1.studentID = a.studentID and b1.disActionID in ('OSS','ISS') and b1.schoolYear = 2023 
+left join ala_testScore c on c.studentID = a.studentID and c.date > '08/10/2021'
 
 group by
     a.studentID,
@@ -32,4 +36,7 @@ group by
     a.lunchStatus,
     a.priExcepDesc,
     a.raceDescription,
-    a.unweightedCumGPA
+    a.unweightedCumGPA,
+    c.AL,
+    c.testName,
+    c.date
