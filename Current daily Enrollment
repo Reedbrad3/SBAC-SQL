@@ -42,9 +42,9 @@ select distinct
    w.[entity-id],
    @date,
    g.grade,
- --n.[race-code],
- --n.gender,
- --case when p.[special-service-id] is not null then 'ESE' else 'NOT ESE' end,
+   n.[race-code],
+   n.gender,
+   case when p.[special-service-id] is not null then 'ESE' else 'NOT ESE' end,
    count(distinct w.[student-id])
 from
   [student-entity]       e
@@ -62,10 +62,10 @@ where
   and w.[entity-id] not in ('0082','0400')
 group by
   w.[entity-id],
-  g.grade
---n.[race-code],
---n.gender
---case when p.[special-service-id] is not null then 'ESE' else 'NOT ESE' end
+  g.grade,
+  n.[race-code],
+  n.gender,
+  case when p.[special-service-id] is not null then 'ESE' else 'NOT ESE' end
 order by
   2,3
 
@@ -83,9 +83,9 @@ select
   s.[school-name] as 'schoolName',
   t.grade,
   t.theDate       as 'date',
---t.race,
---t.gender,
---t.ese,
+  t.race,
+  t.gender,
+  t.ese,
   t.kount         as 'count'  
 from
   @table      t
