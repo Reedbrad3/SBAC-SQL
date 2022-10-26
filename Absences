@@ -1,25 +1,44 @@
-select distinct
+select
   a.studentID,
   a.otherID,
+  a.fleid,
   a.lastName,
   a.firstName,
   a.entityID,
   a.entityName,
   a.grade,
+  a.lunchStatus,
+  b.unweightedCumGPA,
+  b.weightedCumGPA,
+  count(distinct f.disActionID) as 'Suspensions',
+  count(distinct h.dayStatus) as 'Days Missed',
+  h.category,
+  h.dayStatus,
   h.date
   
  
 from
   ala_activeStudents  a 
-  left join ala_attendanceDaily   h on h.studentID = a.studentID and h.dayStatus in ('B','C','D','E','H','P','Q','S','U','X','Y','Z') and h.schoolYear = '2022'
+  left join ala_activeStudents_2122_eoy     b on b.studentID = a.studentID
+  left join ala_roster_history    c on c.studentID = a.studentID and c.courseLevel in ('2','3')
+  left join [student-ew]          d on d.[student-ID] = a.studentID and [withdrawal-school-year] = 2022
+  left join student               e on e.[student-ID] = a.studentID
+  left join ala_behavior          f on f.studentID = a.studentID and f.disActionID in ('ISS','OSS') and f.schoolYear = 2022
+  right join ala_attendanceDaily        h on h.studentID = a.studentID and h.dayStatus in ('D','E','O','P','U','Y') and h.schoolYear = '2023'
   --Current Year Days Missed
 
 group by
   a.studentID,
   a.otherID,
+  a.fleid,
   a.lastName,
   a.firstName,
   a.entityID,
   a.entityName,
-  a.grade,  
-  h.date
+  a.grade,
+  a.lunchStatus,
+  b.unweightedCumGPA,
+  b.weightedCumGPA,
+  h.date,
+  h.dayStatus,
+  h.category
