@@ -1,0 +1,44 @@
+--Will match the enrollment pull to determine student demographics at each school for each day missed. 
+
+select distinct
+    a.studentID,
+    a.category,
+    a.dayStatusDesc,
+    a.entityName,
+    a.entityID,
+    a.race,
+    a.schoolYear,
+    a.date,
+    b.ell,
+    b.gender,
+    b.grade, 
+    case
+    when x.priExcep is not null then 'ESE'
+  else 'NOT ESE'
+   end as 'priExcep'
+
+from
+    ala_attendanceDaily     a
+    left join ala_allStudents b on b.studentID = a.studentID
+    left join ala_exceptionalities x on x.studentID = a.studentID
+Where
+      a.entityID < '0600'
+  and a.entityID not in ('0082','0400')
+  and a.dayStatus in ('D','E','O','P','U','Y') and a.schoolYear = '2023'
+
+group by
+    a.studentID,
+    a.category,
+    a.dayStatusDesc,
+    a.entityName,
+    a.entityID,
+    a.race,
+    a.schoolYear,
+    a.date,
+    b.ell,
+    b.gender,
+    b.grade,
+    case
+    when x.priExcep is not null then 'ESE'
+  else 'NOT ESE'
+   end
