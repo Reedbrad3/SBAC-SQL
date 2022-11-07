@@ -1,4 +1,4 @@
- 
+ -- to properly count add 1 day to the last day in the between statement, will return with a student table with absences and school days in the period being requested. 
 
 set nocount on
 
