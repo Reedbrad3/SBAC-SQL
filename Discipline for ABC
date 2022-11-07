@@ -1,0 +1,22 @@
+select
+    a.studentID,
+    a.entityID,
+    a.grade,
+    a.race,
+    c.ell,
+    c.priExcep,
+    sum(b.disActionTime) as 'Days Suspended',
+    count(a.incidentNo) as 'Discipline Offenses'
+
+from
+ala_behavior    a
+left join ala_behavior b on b.studentID = a.studentID and b.disActionID in  ('OSS','ISS')
+left join ala_allStudents c on c.studentID = a.studentID
+
+group by
+    a.studentID,
+    a.entityID,
+    a.grade,
+    a.race,
+    c.ell,
+    c.priExcep
