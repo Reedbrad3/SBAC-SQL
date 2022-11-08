@@ -34,7 +34,7 @@ select distinct
      and entityID = ew.[entity-id]
      and [date] between cast(ew.[ew-date] as date) and cast(coalesce(dateadd(DD, 1,ew.[withdrawal-date]),getdate()) as date)
 
-     and dayStatus not in ('T','X','Z','')),
+     and dayStatus not in ('D','O','E','P','U','Y')),
  
     (select
        count(distinct [cal-date])
