@@ -33,6 +33,7 @@ declare @table table
   race     varchar(1),
   gender   varchar(1),
   ese      varchar(7),
+  ell      varchar(2),
   kount    int
 )
 
@@ -44,6 +45,7 @@ select distinct
    g.grade,
    n.[race-code],
    n.gender,
+   p.ell,
    case when p.priExcep is not null then 'ESE' else 'NOT ESE' end,
    count(distinct w.[student-id])
 from
@@ -65,6 +67,7 @@ group by
   g.grade,
   n.[race-code],
   n.gender,
+  p.ell,
   case when p.priExcep is not null then 'ESE' else 'NOT ESE' end
 order by
   2,3
@@ -85,6 +88,7 @@ select
   t.theDate       as 'date',
   t.race,
   t.gender,
+  t.ell,
   t.ese,
   t.kount         as 'count'  
 from
