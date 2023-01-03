@@ -1,2 +1,2 @@
 -- Find a specific column within sql database
-select * from information_schema.columns where column_name = 'COLUMN' 
+select * from information_schema.columns like column_name = '%COLUMN%' 
