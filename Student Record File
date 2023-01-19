@@ -1,0 +1,216 @@
+select distinct
+   s.otherID
+  ,s.studentID
+  ,s.fleID
+  ,s.lastName
+  ,s.firstName
+  ,s.dob
+  ,s.gender
+  ,s.grade
+  ,s.entityID
+  ,s.entityName
+  ,s.spReasonCode
+  ,s.priExcep
+  ,s.raceDescription
+  ,s.ell
+  ,s.migrant
+  ,s.dateEnteredNine
+  ,s.gradOption
+  ,s.unweightedCumGPA
+  ,s.weightedCumGPA
+  ,s.homeless
+  ,s.militaryFamily
+  ,s.hispanic
+  ,s.immigrant
+  ,s.lunchStatus
+  ,s.reasonCode
+  ,s.section504
+  ,s.studentType
+
+  ,g.algComplete
+  ,g.algIP
+  ,g.algRemain
+  ,g.geoComplete
+  ,g.geoIP
+  ,g.geoRemain
+  ,g.bioComplete
+  ,g.bioIP
+  ,g.bioRemain
+  ,g.ahComplete
+  ,g.ahIP
+  ,g.ahRemain
+  ,g.engComplete
+  ,g.engIP
+  ,g.engRemain
+  ,g.mathComplete
+  ,g.mathIP
+  ,g.mathRemain
+  ,g.sciComplete
+  ,g.sciIP
+  ,g.sciRemain
+  ,g.whComplete
+  ,g.whIP
+  ,g.whRemain
+  ,g.agComplete
+  ,g.agIP
+  ,g.agRemain
+  ,g.ecComplete
+  ,g.ecIP
+  ,g.ecRemain
+  ,g.pfComplete
+  ,g.pfIP
+  ,g.pfRemain
+  ,g.peComplete
+  ,g.peIP
+  ,g.peRemain
+  ,g.elComplete
+  ,g.elIP
+  ,g.elRemain
+
+  ,d.[Date-Passed-Test-Math]
+  ,d1.[Date-Passed-Test-Comm]
+
+  ,o.[qgtrec-src-id]
+
+  ,t9.date
+  ,t9.SS
+  ,t9.testName
+
+  ,max(t.al)  as 'elaMax'
+  ,max(t2.al) as 'mathMax'
+  ,max(t3.al) as 'algMax'
+  ,max(t4.al) as 'geoMax'
+  ,max(t5.al) as 'bioMax'
+  ,max(t6.al) as 'civMax'
+  ,max(t7.al) as 'ushMax'
+  ,max(t8.al) as 'pertMax'
+  ,max(a.score) as 'MAXSAT'
+  ,max(a1.score) as 'MAXACT'
+  ,max(t.ss)  as 'ela_FSA_MaxSS'
+  ,max(t2.ss) as 'math_FSA_MaxSS'
+  ,max(t3.ss) as 'algMaxSS'
+  ,max(t4.ss) as 'geoMaxSS'
+  ,max(t5.ss) as 'bioMaxSS'
+  ,max(t6.ss) as 'civMaxSS'
+  ,max(t7.ss) as 'ushMaxSS'
+  ,max(t8.ss) as 'pertMaxSS'
+  ,max(a.score) as 'MAX_Total_SATSS'
+  ,max(a1.score) as 'MAXACT_COMP_SS'
+  ,max(a2.score) as 'MaxACTReadingScore'
+  ,max(a3.score) as 'MaxPSA8/9Read'
+  ,max(a4.score) as 'MaxPSANMSQTRead'
+  ,max(a5.score) as 'MAX_READ_SUB_SAT_SS'
+  ,max(a6.score) as 'MAX_MATH_SAT_SS'
+  ,max(a7.score) as 'MAX_RW_SAT_SS'
+  ,max(a8.score) as 'MAX ACT MATH'
+  ,max(a9.score) as 'MAX ACT ENGLISH'
+  ,max(a10.score) as 'MAX ACT SCIENCE'
+  ,r.rank
+
+from
+  ala_activeStudents           s
+  left join ala_gradReqs    g on g.studentID = s.studentID
+  left join ala_testScore      t on  t.studentID = s.studentID and  t.testName = 'FSA ELA'
+  left join ala_testScore     t2 on t2.studentID = s.studentID and t2.testName = 'FSA Math'
+  left join ala_testScore     t3 on t3.studentID = s.studentID and t3.testName = 'FSA Algebra 1'
+  left join ala_testScore     t4 on t4.studentID = s.studentID and t4.testName = 'FSA Geometry'
+  left join ala_testScore     t5 on t5.studentID = s.studentID and t5.testName in ('EB1 BIOLOGY','NGS BIOLOGY')
+  left join ala_testScore     t6 on t6.studentID = s.studentID and t6.testName in ('ECS CIVICS','NGS CIVICS')
+  left join ala_testScore     t7 on t7.studentID = s.studentID and t7.testName in ('EAH US HISTORY','NGS US HISTORY')
+  left join ala_testScore     t8 on t8.studentID = s.studentID and t8.testName = 'PERT'
+  left join ala_NCRACTSATPSAT  a on  a.studentID = s.studentID and  a.testName = 'SA4 TOTAL'
+  left join ala_NCRACTSATPSAT a1 on a1.studentID = s.studentID and a1.testName = 'THE ACT COMP'
+  left join ala_NCRACTSATPSAT a2 on a2.studentID = s.studentID and a2.testName = 'THE ACT READING'
+  left join ala_NCRACTSATPSAT a3 on a3.studentID = s.studentID and a3.testName = 'PSA 8/9 READ'
+  left join ala_NCRACTSATPSAT a4 on a4.studentID = s.studentID and a4.testName = 'PSA NMSQT READ'
+  left join ala_NCRACTSATPSAT a5 on a5.studentID = s.studentID and a5.testName = 'SA4 READ SUB'
+  left join ala_NCRACTSATPSAT a6 on a6.studentID = s.studentID and a6.testName = 'SA4 MATH'
+  left join ala_NCRACTSATPSAT a7 on a7.studentID = s.studentID and a7.testName = 'SA4 RW'
+  left join ala_NCRACTSATPSAT a8 on a8.studentID = s.studentID and a8.testName = 'THE ACT MATH'
+  left join ala_NCRACTSATPSAT a9 on a9.studentID = s.studentID and a9.testName = 'THE ACT ENGLISH'
+  left join ala_NCRACTSATPSAT a10 on a10.studentID = s.studentID and a10.testName = 'THE ACT SCIENCE'
+  left join ala_testScore     t9 on t9.studentID = s.studentID and t9.testName in ('FSA Math','FSA ELA')
+
+
+
+  left join [student-date-passed] d on d.[student-id] = s.studentID
+  left join [student-date-passed] d1 on d1.[student-id] = s.studentID
+  left join [qgtrec-generic-table] o on o.[qgtrec-src-id] = s.studentID and o.[qgtrec-table-name]='FL-STUDENT-CLASS' and o.[qgtrec-chr##2] = 'Y'
+  left join [stu-current-rank] r on r.[student-id] = s.studentID and r.[school-year] = 2022 and r.[rank-date] = (select max([rank-date]) from [stu-current-rank] where [school-year] = 2022 and [student-id] = s.studentID)
+where
+  s.grade in ('09','10','11','12')
+group by
+   s.otherID
+  ,s.studentID
+  ,s.fleID
+  ,s.lastName
+  ,s.firstName
+  ,s.dob
+  ,s.gender
+  ,s.grade
+  ,s.entityID
+  ,s.entityName
+  ,s.spReasonCode
+  ,s.priExcep
+  ,s.raceDescription
+  ,s.ell
+  ,s.migrant
+  ,s.dateEnteredNine
+  ,s.gradOption
+  ,s.unweightedCumGPA
+  ,s.weightedCumGPA
+  ,s.homeless
+  ,s.militaryFamily
+  ,s.hispanic
+  ,s.immigrant
+  ,s.lunchStatus
+  ,s.reasonCode
+  ,s.section504
+  ,s.studentType
+  ,g.algComplete
+  ,g.algIP
+  ,g.algRemain
+  ,g.geoComplete
+  ,g.geoIP
+  ,g.geoRemain
+  ,g.bioComplete
+  ,g.bioIP
+  ,g.bioRemain
+  ,g.ahComplete
+  ,g.ahIP
+  ,g.ahRemain
+  ,g.engComplete
+  ,g.engIP
+  ,g.engRemain
+  ,g.mathComplete
+  ,g.mathIP
+  ,g.mathRemain
+  ,g.sciComplete
+  ,g.sciIP
+  ,g.sciRemain
+  ,g.whComplete
+  ,g.whIP
+  ,g.whRemain
+  ,g.agComplete
+  ,g.agIP
+  ,g.agRemain
+  ,g.ecComplete
+  ,g.ecIP
+  ,g.ecRemain
+  ,g.pfComplete
+  ,g.pfIP
+  ,g.pfRemain
+  ,g.peComplete
+  ,g.peIP
+  ,g.peRemain
+  ,g.elComplete
+  ,g.elIP
+  ,g.elRemain
+  ,a.score
+  ,d.[Date-Passed-Test-Math]
+  ,d1.[Date-Passed-Test-Comm]
+  ,o.[qgtrec-src-id]
+  ,t9.date
+  ,t9.SS
+  ,t9.testName
+  ,r.rank
