@@ -1,0 +1,176 @@
+select distinct
+   s.otherID
+  ,s.studentID
+  ,s.fleID
+  ,s.lastName
+  ,s.firstName
+  ,s.dob
+  ,s.gender
+  ,s.grade
+  ,s.entityID
+  ,s.entityName
+  ,s.spReasonCode
+  ,s.priExcep
+  ,s.raceDescription
+  ,s.ell
+  ,s.migrant
+  ,s.dateEnteredNine
+  ,s.gradOption
+  ,s.unweightedCumGPA
+  ,s.weightedCumGPA
+  ,s.homeless
+  ,s.militaryFamily
+  ,s.hispanic
+  ,s.immigrant
+  ,s.lunchStatus
+  ,s.reasonCode
+  ,s.section504
+  ,s.studentType
+
+  ,g.algComplete
+  ,g.algIP
+  ,g.algRemain
+  ,g.geoComplete
+  ,g.geoIP
+  ,g.geoRemain
+  ,g.bioComplete
+  ,g.bioIP
+  ,g.bioRemain
+  ,g.ahComplete
+  ,g.ahIP
+  ,g.ahRemain
+  ,g.engComplete
+  ,g.engIP
+  ,g.engRemain
+  ,g.mathComplete
+  ,g.mathIP
+  ,g.mathRemain
+  ,g.sciComplete
+  ,g.sciIP
+  ,g.sciRemain
+  ,g.whComplete
+  ,g.whIP
+  ,g.whRemain
+  ,g.agComplete
+  ,g.agIP
+  ,g.agRemain
+  ,g.ecComplete
+  ,g.ecIP
+  ,g.ecRemain
+  ,g.pfComplete
+  ,g.pfIP
+  ,g.pfRemain
+  ,g.peComplete
+  ,g.peIP
+  ,g.peRemain
+  ,g.elComplete
+  ,g.elIP
+  ,g.elRemain
+
+  ,d.[Date-Passed-Test-Math]
+  ,d1.[Date-Passed-Test-Comm]
+
+  ,o.[qgtrec-src-id]
+
+  ,t.al as FSAAL
+  ,t.date as FSADate
+  ,t.testName as FSATestName
+  ,t.ss as FSATestSS
+  ,a.testName as SATACTTestName
+  ,a.score as SATACTTestScore
+  ,a.testdate as SATACTDate
+
+  ,r.rank
+  ,r.[rank-date]
+
+from
+  ala_activeStudents           s
+  left join ala_gradReqs    g on g.studentID = s.studentID
+  left join ala_testScore      t on  t.studentID = s.studentID
+  left join ala_NCRACTSATPSAT  a on  a.studentID = s.studentID
+  left join [student-date-passed] d on d.[student-id] = s.studentID
+  left join [student-date-passed] d1 on d1.[student-id] = s.studentID
+  left join [qgtrec-generic-table] o on o.[qgtrec-src-id] = s.studentID and o.[qgtrec-table-name]='FL-STUDENT-CLASS' and o.[qgtrec-chr##2] = 'Y'
+  left join [stu-current-rank] r on r.[student-id] = s.studentID and r.[school-year] = 2022 
+where
+  s.grade in ('09','10','11','12')
+group by
+   s.otherID
+  ,s.studentID
+  ,s.fleID
+  ,s.lastName
+  ,s.firstName
+  ,s.dob
+  ,s.gender
+  ,s.grade
+  ,s.entityID
+  ,s.entityName
+  ,s.spReasonCode
+  ,s.priExcep
+  ,s.raceDescription
+  ,s.ell
+  ,s.migrant
+  ,s.dateEnteredNine
+  ,s.gradOption
+  ,s.unweightedCumGPA
+  ,s.weightedCumGPA
+  ,s.homeless
+  ,s.militaryFamily
+  ,s.hispanic
+  ,s.immigrant
+  ,s.lunchStatus
+  ,s.reasonCode
+  ,s.section504
+  ,s.studentType
+  ,g.algComplete
+  ,g.algIP
+  ,g.algRemain
+  ,g.geoComplete
+  ,g.geoIP
+  ,g.geoRemain
+  ,g.bioComplete
+  ,g.bioIP
+  ,g.bioRemain
+  ,g.ahComplete
+  ,g.ahIP
+  ,g.ahRemain
+  ,g.engComplete
+  ,g.engIP
+  ,g.engRemain
+  ,g.mathComplete
+  ,g.mathIP
+  ,g.mathRemain
+  ,g.sciComplete
+  ,g.sciIP
+  ,g.sciRemain
+  ,g.whComplete
+  ,g.whIP
+  ,g.whRemain
+  ,g.agComplete
+  ,g.agIP
+  ,g.agRemain
+  ,g.ecComplete
+  ,g.ecIP
+  ,g.ecRemain
+  ,g.pfComplete
+  ,g.pfIP
+  ,g.pfRemain
+  ,g.peComplete
+  ,g.peIP
+  ,g.peRemain
+  ,g.elComplete
+  ,g.elIP
+  ,g.elRemain
+  ,a.score
+  ,d.[Date-Passed-Test-Math]
+  ,d1.[Date-Passed-Test-Comm]
+  ,o.[qgtrec-src-id]
+  ,t.al
+  ,t.date 
+  ,t.testName
+  ,t.ss
+  ,a.testName
+  ,a.score
+  ,a.testdate
+  ,r.rank
+  ,r.[rank-date]
