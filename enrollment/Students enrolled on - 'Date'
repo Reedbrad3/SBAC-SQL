@@ -73,4 +73,4 @@ select
    @date
 from
   @table      t
-  join school s on s.[school-id] = t.entityID
+  join school s on s.[school-id] = t.entityID 
