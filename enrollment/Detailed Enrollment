@@ -1,0 +1,98 @@
+set nocount on
+
+declare @date date
+
+declare day_cursor cursor FAST_FORWARD READ_ONLY for
+
+select distinct
+  cast([cal-date] as date)
+from
+  [calendar-day]
+where
+  [entity-id] < '0600'
+  and [entity-id] not in ('0082','0400')
+  and [cal-days] = 1.00
+  and cast([cal-date] as date) between '2022-08-10' and cast(getDate() as date)
+order by
+  1
+
+open day_cursor
+
+fetch next from day_cursor into @date
+
+while @@fetch_status = 0
+
+  begin
+ 
+  --====================================================================================================
+declare @table table
+(
+  entityID varchar(4),
+  theDate  date,
+  grade    varchar(2),
+  race     varchar(1),
+  gender   varchar(1),
+  ese      varchar(7),
+  ell      varchar(2),
+  kount    int
+)
+
+insert into
+  @table
+select distinct
+   w.[entity-id],
+   @date,
+   g.grade,
+   n.[race-code],
+   n.gender,
+   p.ell,
+   case when p.priExcep is not null then 'ESE' else 'NOT ESE' end,
+   count(distinct w.[student-id])
+from
+  [student-entity]       e
+  join student           s on s.[student-id] = e.[student-id]
+  join [name]            n on n.[name-id] = s.[name-id]
+  join [student-ew]      w on w.[student-id] = e.[student-id] and w.[entity-id] = e.[entity-id] and (w.[withdrawal-school-year] = 2023 or (w.[withdrawal-school-year] = 0 and w.[ew-date] < '2023-08-10'))
+  join [ent-grd-gy-xref] g on g.[school-year] = 2023 and g.[grad-yr] = cast(w.[withdrawal-grad-yr] as int)
+  left join ala_activeStudents p on p.studentID = e.[student-id]
+where
+  cast(w.[ew-date] as date) between '2022-08-10' and @date
+  and (cast(w.[withdrawal-date] as date) > @date or w.[withdrawal-date] is null)
+  and e.[x-default-entity] = 1 -- USE WITHDRAWAL-DEFAULT-ENTITY FOR PAST YEARS
+--and w.[entity-id] = '0031'
+  and w.[entity-id] < '0600'
+  and w.[entity-id] not in ('0082','0400')
+group by
+  w.[entity-id],
+  g.grade,
+  n.[race-code],
+  n.gender,
+  p.ell,
+  case when p.priExcep is not null then 'ESE' else 'NOT ESE' end
+order by
+  2,3
+
+--====================================================================================================
+
+    fetch next from day_cursor into @date
+ 
+  end
+
+close      day_cursor
+deallocate day_cursor
+
+select
+  t.entityID,
+  s.[school-name] as 'schoolName',
+  t.grade,
+  t.theDate       as 'date',
+  t.race,
+  t.gender,
+  t.ell,
+  t.ese,
+  t.kount         as 'count'  
+from
+  @table      t
+  join school s on s.[school-id] = t.entityID
+order by
+  1,4,3
