@@ -54,7 +54,7 @@ from
   join [name]            n on n.[name-id] = s.[name-id]
   join [student-ew]      w on w.[student-id] = e.[student-id] and w.[entity-id] = e.[entity-id] and (w.[withdrawal-school-year] = 2023 or (w.[withdrawal-school-year] = 0 and w.[ew-date] < '2023-08-10'))
   join [ent-grd-gy-xref] g on g.[school-year] = 2023 and g.[grad-yr] = cast(w.[withdrawal-grad-yr] as int)
-  left join ala_activeStudents p on p.studentID = e.[student-id]
+  left join ala_activeStudents p on p.studentID = e.[student-id] and p.priExcep <> 'L'
 where
   cast(w.[ew-date] as date) between '2022-08-10' and @date
   and (cast(w.[withdrawal-date] as date) > @date or w.[withdrawal-date] is null)
@@ -94,5 +94,3 @@ select
 from
   @table      t
   join school s on s.[school-id] = t.entityID
-order by
-  1,4,3
