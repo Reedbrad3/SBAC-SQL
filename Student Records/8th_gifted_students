@@ -1,0 +1,29 @@
+select distinct
+  a.otherID,
+  a.lastName,
+  a.firstName,
+  a.grade,
+  a.priExcep,
+  a.entityName,
+  a.unweightedCumGPA,
+  b.nyZoneSchool,
+  count(distinct c.incidentNo) as 'Referrals',
+  count(distinct c1.incidentNo) as 'Susp'
+from
+  ala_activeStudents            a
+  left join ala_zoneSchool b on b.studentID = a.studentID
+  left join ala_behavior c on c.studentID = a.studentID and c.offenseDate >= '2022-08-10'
+  left join ala_behavior c1 on c1.studentID = a.studentID and c.offenseDate >= '2022-08-10' and c.disActionID = 'OSS'
+where
+ a.priExcep = 'L' and a.grade = '08'
+group by
+  a.otherID,
+  a.lastName,
+  a.firstName,
+  a.grade,
+  a.priExcep,
+  a.entityName,
+  a.unweightedCumGPA,
+  b.nyZoneSchool
+  
+  ## Finds all gifted students in 8th grade and the information needed to determine 9th grade gifted programs
