@@ -12,8 +12,8 @@ select distinct
 from
   ala_activeStudents            a
   left join ala_zoneSchool b on b.studentID = a.studentID
-  left join ala_behavior c on c.studentID = a.studentID and c.offenseDate >= '2022-08-10'
-  left join ala_behavior c1 on c1.studentID = a.studentID and c.offenseDate >= '2022-08-10' and c.disActionID = 'OSS'
+  left join ala_behavior c on c.studentID = a.studentID and c.schoolYear>= 2023 and c.[Off-Ref] = 'Referral'
+  left join ala_behavior c1 on c1.studentID = a.studentID and c1.schoolYear= 2023 and c1.disActionID = 'OSS'
 where
  a.priExcep = 'L' and a.grade = '08'
 group by
