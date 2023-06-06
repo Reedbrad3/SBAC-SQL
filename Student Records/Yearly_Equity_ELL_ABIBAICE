@@ -25,4 +25,4 @@ b.ell
 select *
  from @equity;
 
-#Shows count of students in ABIBAICE with ELL code
+--Shows count of students in ABIBAICE with ELL code
