@@ -1,14 +1,12 @@
 DECLARE @equity table 
-(gender varchar(40),
- raceDescription varchar(40),
+(ell varchar(40),
  count INT,
  percentag DECIMAL(10,4)
  );
 insert into 
 @equity
 select distinct
-	b.gender,
-	b.raceDescription,
+	b.ell,
  COUNT(DISTINCT r.studentID) AS 'count',
 (COUNT(DISTINCT r.studentID) * 1.0) / (SELECT COUNT(DISTINCT r3.studentID) FROM ala_roster r3
                                             JOIN school s3 ON s3.[school-id] = r3.entityID
@@ -22,8 +20,9 @@ from
 where
 r.courseType = 'AP' or courseType = 'AIC' or courseName like '%AICE%' or courseType = 'IB' or courseName like 'IB%' or courseName like 'FL PRE-IB%'
 group by
-b.gender,
-b.raceDescription
+b.ell
 
 select *
  from @equity;
+
+#Shows count of students in ABIBAICE with ELL code
