@@ -1,0 +1,14 @@
+select distinct
+	b.gender,
+	b.raceDescription,
+  count(distinct r.studentID) as 'count'
+from
+  ala_roster r
+  join school        s on s.[school-id] = r.entityID
+  join ala_allStudents b on b.studentID = r.studentID
+where
+r.courseType = 'AP' or courseType = 'AIC' or courseName like '%AICE%' or courseType = 'IB' or courseName like 'IB%' or courseName like 'FL PRE-IB%'
+group by
+b.gender,
+b.raceDescription
+##Runs pull to get numbers for student enrollment of IB, AP, AICE
