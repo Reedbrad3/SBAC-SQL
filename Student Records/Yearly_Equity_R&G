@@ -29,4 +29,5 @@ select *
  from @equity;
 
 
-##Runs pull to get numbers for student enrollment of IB, AP, AICE
+##Runs pull to get numbers for student enrollment of IB, AP, AICE broken down my Race & Gender
+
