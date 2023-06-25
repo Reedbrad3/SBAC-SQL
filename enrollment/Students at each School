@@ -1,4 +1,6 @@
---Display the number of students at each school and within each grade
+-- BR / 2023 / Students
+-- Count based on school
+-- Display the number of students at each school and within each grade
 select distinct
   entityID,
   entityName,
