@@ -1,3 +1,5 @@
+-- BR / 2023 / Translate school code to short name
+
 CASE [Current School]
 WHEN '0031' THEN 'Parker'
 WHEN '0041' THEN 'Foster'
