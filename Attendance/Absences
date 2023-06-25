@@ -1,6 +1,7 @@
 -- BR / 2023 / Current days missed & suspensions by student
 -- Includes day status and cat + date
 -- Shows each individual absence not a total count
+-- Must change filters included in from statments to work correctly
 
 select
   a.studentID,
