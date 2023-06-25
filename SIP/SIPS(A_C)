@@ -1,4 +1,6 @@
+-- BR / 2023 / SIPS Yearly Part A & C
 --Duplicate file for SIPS information. Pulls student level data to be compiled into school level. 
+
 select distinct
   a.studentID,
   a.otherID,
