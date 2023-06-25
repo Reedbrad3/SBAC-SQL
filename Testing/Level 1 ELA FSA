@@ -1,4 +1,8 @@
-#Level 1 FSA ELA
+-- BR / 2023 / ELA FSA
+-- Level 1 students based on ELA FSA
+-- Courses by code
+-- Level 1 ELA FSA
+
 select distinct
   t.schl,
   s.[school-name],
