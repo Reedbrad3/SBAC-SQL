@@ -1,3 +1,7 @@
+-- BR / 2023 / Count of offenses & days suspended
+-- Shows all students
+-- Shows any offense (No referrals) 
+
 select
     a.studentID,
     a.entityID,
