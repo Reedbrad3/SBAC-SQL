@@ -1,3 +1,6 @@
+-- BR / 2023 / Student Record
+-- Used for Tableau Server in student summary report
+
 select distinct
    s.otherID
   ,s.studentID
