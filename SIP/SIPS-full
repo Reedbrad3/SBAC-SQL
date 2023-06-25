@@ -1,6 +1,7 @@
---The goal of the SQL is to pull parts of the sips plan (A,C). This is a combination report to get all the information as cleanly and quickly as possible. 
-
+-- BR / 2023 / Current days missed & suspensions by student
+--The goal of the SQL is to pull parts of the sips plan (A,B,C). 
 --Count of Students
+
 select distinct
   a.studentID,
   a.otherID,
