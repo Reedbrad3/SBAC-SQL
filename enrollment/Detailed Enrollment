@@ -1,3 +1,7 @@
+-- BR / 2023 / ELA FSA
+-- Detailed enrollment for students
+-- Depreciated 
+
 set nocount on
 
 declare @date date
