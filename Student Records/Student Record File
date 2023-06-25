@@ -1,3 +1,7 @@
+-- BR / 2023 / Student record
+-- All student records needed for graduation and student class placement
+-- Replaces need for skyward pull 
+
 select distinct
    s.otherID
   ,s.studentID
