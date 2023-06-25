@@ -1,4 +1,6 @@
---Will match the enrollment pull to determine student demographics at each school for each day missed. 
+-- BR / 2023 / enrollment pull for all students
+-- Will match the enrollment pull to determine student demographics at each school for each day missed. 
+-- Depreciated 
 
 select distinct
     a.studentID,
