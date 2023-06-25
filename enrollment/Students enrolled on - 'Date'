@@ -1,3 +1,5 @@
+-- BR / 2023 / Enrolled on
+-- Shows students enrolled on or between specific date(s)
 set nocount on
 
 declare @date date
