@@ -1,3 +1,5 @@
+-- BR / 2023 / Zoning exemption
+
 select distinct
   a.studentID,
   a.otherID,
