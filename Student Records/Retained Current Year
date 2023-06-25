@@ -1,3 +1,7 @@
+-- BR / 2023 / Current days missed & suspensions by student
+-- List of students retained current year
+-- Change school year in from and where statement
+
 select distinct
   e.[entity-id],
   l.[school-name],
