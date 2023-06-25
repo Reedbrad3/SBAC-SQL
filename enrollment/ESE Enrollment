@@ -1,3 +1,7 @@
+-- BR / 2023 / ESE Enrollment
+-- Detailed enrollment for each student
+-- Count based on school
+
 set nocount on
 
 declare @date date
