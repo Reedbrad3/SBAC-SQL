@@ -1,3 +1,7 @@
+-- BR / 2023 / Current days missed & suspensions by student
+-- Includes day status and cat + date
+-- Shows each individual absence not a total count
+
 select
   a.studentID,
   a.otherID,
@@ -20,12 +24,12 @@ select
 from
   ala_activeStudents  a 
   left join ala_activeStudents_2122_eoy     b on b.studentID = a.studentID
-  left join ala_roster_history    c on c.studentID = a.studentID and c.courseLevel in ('2','3')
-  left join [student-ew]          d on d.[student-ID] = a.studentID and [withdrawal-school-year] = 2022
-  left join student               e on e.[student-ID] = a.studentID
-  left join ala_behavior          f on f.studentID = a.studentID and f.disActionID in ('ISS','OSS') and f.schoolYear = 2022
-  right join ala_attendanceDaily        h on h.studentID = a.studentID and h.dayStatus in ('D','E','O','P','U','Y') and h.schoolYear = '2023'
-  --Current Year Days Missed
+  left join ala_roster_history              c on c.studentID = a.studentID and c.courseLevel in ('2','3')
+  left join [student-ew]                    d on d.[student-ID] = a.studentID and [withdrawal-school-year] = 2022
+  left join student                         e on e.[student-ID] = a.studentID
+  left join ala_behavior                    f on f.studentID = a.studentID and f.disActionID in ('ISS','OSS') and f.schoolYear = 2022
+  right join ala_attendanceDaily            h on h.studentID = a.studentID and h.dayStatus in ('D','E','O','P','U','Y') and h.schoolYear = '2023'
+
 
 group by
   a.studentID,
