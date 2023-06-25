@@ -1,3 +1,6 @@
+-- BR / 2023 / Current Year attendance
+-- Depreciated 
+
 declare @table table
   (
     entityID   varchar(4),
