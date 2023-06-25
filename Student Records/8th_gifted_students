@@ -1,3 +1,6 @@
+-- BR / 2023 / Current days missed & suspensions by student
+-- Finds gifted students in 8th grade, info for 9th placement
+
 select distinct
   a.otherID,
   a.lastName,
