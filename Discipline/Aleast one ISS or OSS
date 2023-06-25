@@ -1,4 +1,7 @@
-#aleast one ISS or OSS
+-- BR / 2023 / Current days missed & suspensions by student
+-- Shows all students with aleast one ISS or OSS
+-- Change school year in where statement
+
 select distinct
   b.entityID,
   s.[school-name],
