@@ -1,3 +1,7 @@
+-- BR / 2023 / Current year attendance & attendance %
+-- Change school year in from statement
+-- Shows dates from start of year to current day
+
 set nocount on
 
 
