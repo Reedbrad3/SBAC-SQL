@@ -1,13 +1,19 @@
+-- BR / 2023 / ELL ABIBAICE
+-- All students for ELL equity report
+-- Shows count of students
+
 DECLARE @equity table 
 (ell varchar(40),
  count INT,
  percentag DECIMAL(10,4)
  );
+
 insert into 
 @equity
+
 select distinct
-	b.ell,
- COUNT(DISTINCT r.studentID) AS 'count',
+b.ell,
+COUNT(DISTINCT r.studentID) AS 'count',
 (COUNT(DISTINCT r.studentID) * 1.0) / (SELECT COUNT(DISTINCT r3.studentID) FROM ala_roster r3
                                             JOIN school s3 ON s3.[school-id] = r3.entityID
                                             JOIN ala_allStudents b3 ON b3.studentID = r3.studentID
