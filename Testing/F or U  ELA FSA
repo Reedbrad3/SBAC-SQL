@@ -1,4 +1,7 @@
-#F or U  ELA
+-- BR / 2023 / ELA FSA
+-- Failed students based on ELA FSA
+-- Courses by code
+-- F or U  ELA
 select distinct
   r.entityID,
   s.[school-name],
