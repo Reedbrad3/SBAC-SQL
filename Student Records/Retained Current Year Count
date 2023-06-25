@@ -1,3 +1,7 @@
+-- BR / 2023 
+-- Number of students retained 
+-- Change from and where year statement
+
 select distinct
   s.[other-id],
   e.*
