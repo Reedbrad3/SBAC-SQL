@@ -1,3 +1,6 @@
+-- BR / 2023 / Crop
+-- Students enrolled in CROP, needs for graduation 
+
 select distinct
   a.studentID,
   a.otherID,
