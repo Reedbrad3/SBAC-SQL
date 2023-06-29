@@ -1,6 +1,3 @@
--- BR / 2023 / Enrollment
--- Detailed enrollment for each student
--- Count based on school
 set nocount on
 
 declare @date date
@@ -15,7 +12,7 @@ where
   [entity-id] < '0600'
   and [entity-id] not in ('0082','0400')
   and [cal-days] = 1.00
-  and cast([cal-date] as date) between '2022-08-10' and cast(getDate() as date)
+  and cast([cal-date] as date) between '2023-08-10' and cast(getDate() as date)
 order by
   1
 
@@ -36,7 +33,7 @@ declare @table table
   race     varchar(1),
   gender   varchar(1),
   ese      varchar(7),
-  ell      varchar(2),
+--ell      varchar(2),
   kount    int
 )
 
@@ -48,18 +45,18 @@ select distinct
    g.grade,
    n.[race-code],
    n.gender,
-   p.ell,
+--p.ell,
    case when p.priExcep is not null then 'ESE' else 'NOT ESE' end,
    count(distinct w.[student-id])
 from
   [student-entity]       e
   join student           s on s.[student-id] = e.[student-id]
   join [name]            n on n.[name-id] = s.[name-id]
-  join [student-ew]      w on w.[student-id] = e.[student-id] and w.[entity-id] = e.[entity-id] and (w.[withdrawal-school-year] = 2023 or (w.[withdrawal-school-year] = 0 and w.[ew-date] < '2023-08-10'))
-  join [ent-grd-gy-xref] g on g.[school-year] = 2023 and g.[grad-yr] = cast(w.[withdrawal-grad-yr] as int)
-  left join ala_activeStudents p on p.studentID = e.[student-id] and p.priExcep <> 'L'
+  join [student-ew]      w on w.[student-id] = e.[student-id] and w.[entity-id] = e.[entity-id] and (w.[withdrawal-school-year] = 2024 or (w.[withdrawal-school-year] = 0 and w.[ew-date] < '2024-08-10'))
+  join [ent-grd-gy-xref] g on g.[school-year] = 2024 and g.[grad-yr] = cast(w.[withdrawal-grad-yr] as int)
+  left join ala_activeStudents p on p.studentID = e.[student-id]
 where
-  cast(w.[ew-date] as date) between '2022-08-10' and @date
+  cast(w.[ew-date] as date) between '2023-08-10' and @date
   and (cast(w.[withdrawal-date] as date) > @date or w.[withdrawal-date] is null)
   and e.[x-default-entity] = 1 -- USE WITHDRAWAL-DEFAULT-ENTITY FOR PAST YEARS
 --and w.[entity-id] = '0031'
@@ -70,7 +67,7 @@ group by
   g.grade,
   n.[race-code],
   n.gender,
-  p.ell,
+--p.ell,
   case when p.priExcep is not null then 'ESE' else 'NOT ESE' end
 order by
   2,3
@@ -91,9 +88,11 @@ select
   t.theDate       as 'date',
   t.race,
   t.gender,
-  t.ell,
+--t.ell,
   t.ese,
   t.kount         as 'count'  
 from
   @table      t
   join school s on s.[school-id] = t.entityID
+order by
+  1,4,3
