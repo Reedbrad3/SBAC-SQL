@@ -1,0 +1,164 @@
+-- Bradley Reed, 7/6/2023
+-- Design to Create crop file for all middle school students (Grade 06,07,08)
+-- Crop determines "F" recorded
+
+SET ansi_warnings OFF
+GO
+declare @table table
+(
+	studentID int,
+	otherID varchar(10),
+	lastName varchar(30),
+	firstName varchar(30),
+	entityName varchar(40),
+	grade varchar(2),
+	lunchStatus varchar(10),
+	unweightedGPA varchar(10),
+	weightedGPA varchar(10),
+	courseName varchar(40),
+	courseNumber varchar(20),
+	courseLevel int,
+	sem1Grade varchar(10),
+	sem2Grade varchar(10),
+	FG varchar(10),
+	dept varchar(10),
+	creditsEarned varchar(10),
+	subject varchar(10),
+	testName varchar(20),
+	date DATE,
+	parentemail varchar(30),
+	parentfirstname varchar(30),
+	parentphone varchar(20),
+	parentsecond varchar(20),
+	civmax varchar(10),
+	daysmissed int
+	)
+
+insert into
+@table
+
+select distinct
+  a.studentID,
+  a.otherID,
+  a.lastName,
+  a.firstName,
+  a.entityName,
+  a.grade,
+  a.lunchStatus,
+  b.unweightedCumGPA,
+  b.weightedCumGPA,
+  c.courseName,
+  c.courseNumber,
+  c.courseLevel,
+  c.sem1Grade,
+  c.sem2Grade,
+  c.FG,
+  c.dept,
+  c.creditsEarned,
+  c.subject,
+  g.testName,
+  g.date,
+  i.parentEmail,
+  i.parentFirstName,
+  i.parentPriPhone,
+  i.parentSecondPhone,
+  max(g.al) as 'civmax',
+  count(distinct h.date) as 'Days Missed'
+
+ 
+from
+  ala_activeStudents  a 
+  left join ala_activeStudents_2122_eoy     b on b.studentID = a.studentID
+  left join ala_roster_history    c on c.studentID = a.studentID and c.courseLevel in ('2','3')
+  left join ala_roster            c1 on c1.studentID = a.studentID and c1.courseLevel in ('2','3')
+  left join [student-ew]          d on d.[student-ID] = a.studentID and [withdrawal-school-year] = 2022
+  left join student               e on e.[student-ID] = a.studentID
+  left join ala_behavior          f on f.studentID = a.studentID and f.disActionID in ('ISS','OSS') and f.schoolYear = 2022
+  left join ala_testScore         g on g.studentID = a.studentID and g.grade in ('06','07','08') and g.testName in ('ECS CIVICS','NGS CIVICS')
+  left join ala_attendanceDaily   h on h.studentID = a.studentID and h.dayStatus in ('B','C','D','E','H','P','Q','S','U','X','Y','Z') and h.schoolYear = '2023'
+  left join ala_studentParents    i on i.studentID = a.studentID 
+where
+  a.grade in ('06','07','08')
+group by
+  a.studentID,
+  a.otherID,
+  a.lastName,
+  a.firstName,
+  a.entityName,
+  a.grade,
+  a.lunchStatus,
+  b.unweightedCumGPA,
+  b.weightedCumGPA,
+  c.courseName,
+  c.courseNumber,
+  c.courseLevel,
+  c.sem1Grade,
+  c.sem2Grade,
+  c.FG,
+  c.dept,
+  c.creditsEarned,
+  c.subject,
+  g.testName,
+  g.date,
+  i.parentEmail,
+  i.parentFirstName,
+  i.parentPriPhone,
+  i.parentSecondPhone
+
+  
+  select distinct
+t.studentID,
+t.otherID,
+t.lastName,
+t.firstName,
+t.entityName,
+t.grade,
+t.lunchStatus,
+t.unweightedGPA,
+t.weightedGPA,
+t.courseName,
+t.courseNumber,
+t.sem1Grade,
+t.sem2Grade,
+t.FG,
+t.dept,
+t.creditsEarned,
+t.subject,
+t.testName,
+t.date,
+t.parentemail,
+t.parentFirstName,
+t.parentPhone,
+t.parentSecond,
+t.civmax,
+t.daysmissed
+
+from 
+@table t
+
+group by
+t.studentID,
+t.otherID,
+t.lastName,
+t.firstName,
+t.entityName,
+t.grade,
+t.lunchStatus,
+t.unweightedGPA,
+t.weightedGPA,
+t.courseName,
+t.courseNumber,
+t.sem1Grade,
+t.sem2Grade,
+t.FG,
+t.dept,
+t.creditsEarned,
+t.subject,
+t.testName,
+t.date,
+t.parentemail,
+t.parentFirstName,
+t.parentPhone,
+t.parentSecond,
+t.civmax,
+t.daysmissed
