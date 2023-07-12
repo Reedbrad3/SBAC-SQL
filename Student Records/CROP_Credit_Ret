@@ -1,0 +1,18 @@
+-- Crop credit retreval 
+-- BR JULY 2023
+
+select
+  r.[cor-alphakey],
+  c.[cor-num-id],
+  c.[unused-char-1] as "Course_Name",
+  c.[school-year],
+  c.[student-id],
+  c.[grd-fnl-mrk]
+from
+  [student-class] c
+  join course r on r.[cor-num-id] = c.[cor-num-id]
+ 
+
+where
+  c.[school-year] in('2019','2020','2021','2022')
+  and c.[entity-id] = 'TR00'
