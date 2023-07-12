@@ -3,7 +3,7 @@
 
 select
   r.[cor-alphakey],
-  a.studentID,
+  a.otherID,
   c.[cor-num-id],
   c.[unused-char-1] as "Course_Name_CR",
   c.[school-year],
