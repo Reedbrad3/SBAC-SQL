@@ -18,20 +18,20 @@ select distinct
   count(distinct i.studentID) as 'FSA_MATH_1',
   count(distinct j.studentID) as 'Repeat_Current_Year'
 from
-  ala_activeStudents            a
-  join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-school-year] = 2022
-  left join ala_behavior c on  c.studentID    = a.studentID and c.schoolYear = 2022 and c.disActionID in ('ISS','OSS')
-  left join [student-ew] e on e.[student-id] = a.studentID and e.[withdrawal-school-year] = 2022
-  left join [ent-grd-gy-xref] d on d.[school-year] = 2022 and d.[grad-yr] = cast(e.[withdrawal-grad-yr] as int)
-  left join ala_roster_history f on f.studentID = a.studentID and f.schoolYear = 2022 and (f.sem1Grade = 'F' or f.sem2Grade = 'F')
+  ala_activeStudents_2223_eoy            a
+  join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-school-year] = 2023
+  left join ala_behavior c on  c.studentID    = a.studentID and c.schoolYear = 2023 and c.disActionID in ('ISS','OSS')
+  left join [student-ew] e on e.[student-id] = a.studentID and e.[withdrawal-school-year] = 2023
+  left join [ent-grd-gy-xref] d on d.[school-year] = 2023 and d.[grad-yr] = cast(e.[withdrawal-grad-yr] as int)
+  left join ala_roster_history f on f.studentID = a.studentID and f.schoolYear = 2023 and (f.Q1 = 'F' or f.Q2 = 'F' or f.Q3 = 'F' or f.Q4 = 'F')
   and f.stateCode in ('5010041','5010042','5010043','5010044','5010045','5010046','1001010','1001020','1001040',
                       '1001050','1001070','1001080','1001310','1001320','1001340','1001350','1001370','1001380')
-  left join ala_roster_history g on g.studentID = a.studentID and g.schoolYear = 2022 and (g.sem1Grade = 'F' or g.sem2Grade = 'F')
+  left join ala_roster_history g on g.studentID = a.studentID and g.schoolYear = 2023 and (f.Q1 = 'F' or f.Q2 = 'F' or f.Q3 = 'F' or f.Q4 = 'F')
   and g.stateCode in ('5012020','5012030','5012040','5012050','5012060','5012070','1205010','1205020','1205040','1205050',
                     '1205070','1200310','1200320','1200330','1200340','1206310','1206320','1206300','1207300')
-  left join ala_testScore h on h.studentID = a.studentID and h.testName = 'FSA ELA' and h.date between '2022-04-01' and '2022-06-30' and h.AL = '1'
-  left join ala_testScore i on i.studentID = a.studentID and i.testName = 'FSA Math' and i.date between '2022-05-01' and '2022-06-30' and i.AL = '1'
-  left join ala_activeStudents_2122_eoy j on j.studentID = a.studentID and j.grade = a.grade
+  left join ala_fastTests h on h.studentID = a.studentID and h.testName = 'FAST ELA PM3' and h.AL = '1'
+  left join ala_fastTests i on i.studentID = a.studentID and i.testName = 'FAST Math' and i.date between '2023-04-01' and '2023-06-30' and i.AL = '1'
+  left join ala_activeStudents j on j.studentID = a.studentID and j.grade = a.grade
 group by
   a.studentID,
   a.otherID,
