@@ -16,7 +16,8 @@ select distinct
   count(distinct g.studentID) as 'F_MATH',
   count(distinct h.studentID) as 'FSA_ELA_1',
   count(distinct i.studentID) as 'FSA_MATH_1',
-  count(distinct j.studentID) as 'Repeat_Current_Year'
+  count(distinct j.studentID) as 'Repeat_Current_Year',
+  count(distinct c.studentID)+count(distinct f.studentID)+count(distinct g.studentID)+count(distinct h.studentID)+count(distinct i.studentID)+count(distinct j.studentID) as 'two or more'
 from
   ala_activeStudents_2223_eoy            a
   join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-school-year] = 2023
