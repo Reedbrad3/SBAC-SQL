@@ -3,34 +3,41 @@
 --Count of Students
 
 select distinct
-  a.studentID,
+  a.studentID, -- Student information for deeper dive
   a.otherID,
   a.entityID,
   a.grade,
   b.[withdrawal-school-year],
-  sum(distinct b.[attendance-days]) as 'att',
+
+  sum(distinct b.[attendance-days]) as 'att',  -- start part a.early warning
   sum(distinct b.[absence-days]) as 'abs',
   sum(distinct b.[attendance-days]+b.[absence-days]) as 'tot',
   count(distinct c.studentID) as 'Suspensions',
   count(distinct f.studentID) as 'F_ELA',
   count(distinct g.studentID) as 'F_MATH',
   count(distinct h.studentID) as 'FSA_ELA_1',
-  count(distinct i.studentID) as 'FSA_MATH_1',
-  count(distinct j.studentID) as 'Repeat_Current_Year',
-  count(distinct c.studentID)+count(distinct f.studentID)+count(distinct g.studentID)+count(distinct h.studentID)+count(distinct i.studentID)+count(distinct j.studentID) as 'two or more'
+  count(distinct i.studentID) as 'FSA_MATH_1', -- end part a. early warning
+
+  count(distinct j.studentID) as 'Repeat_Current_Year', -- Part c. early warning
+
+  count(distinct c.studentID)+count(distinct f.studentID)+count(distinct g.studentID)+count(distinct h.studentID)+count(distinct i.studentID)+count(distinct j.studentID) as 'two or more' -- Part b. early warning
+
 from
   ala_activeStudents_2223_eoy            a
   join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-school-year] = 2023
   left join ala_behavior c on  c.studentID    = a.studentID and c.schoolYear = 2023 and c.disActionID in ('ISS','OSS')
   left join [student-ew] e on e.[student-id] = a.studentID and e.[withdrawal-school-year] = 2023
   left join [ent-grd-gy-xref] d on d.[school-year] = 2023 and d.[grad-yr] = cast(e.[withdrawal-grad-yr] as int)
-  left join ala_roster_history f on f.studentID = a.studentID and f.schoolYear = 2023 and (f.Q1 = 'F' or f.Q2 = 'F' or f.Q3 = 'F' or f.Q4 = 'F')
+  left join ala_roster_history f on f.studentID = a.studentID and f.schoolYear = 2023 and (f.Q1 = 'F' or f.Q2 = 'F' or f.Q3 = 'F' or f.Q4 = 'F') -- F in any quarter
+
   and f.stateCode in ('5010041','5010042','5010043','5010044','5010045','5010046','1001010','1001020','1001040',
-                      '1001050','1001070','1001080','1001310','1001320','1001340','1001350','1001370','1001380')
-  left join ala_roster_history g on g.studentID = a.studentID and g.schoolYear = 2023 and (g.Q1 = 'F' or g.Q2 = 'F' or g.Q3 = 'F' or g.Q4 = 'F')
+                      '1001050','1001070','1001080','1001310','1001320','1001340','1001350','1001370','1001380') -- Current Classes (5xxxxx = elem, 1xxxxxx = MS/HS
+
+  left join ala_roster_history g on g.studentID = a.studentID and g.schoolYear = 2023 and (g.Q1 = 'F' or g.Q2 = 'F' or g.Q3 = 'F' or g.Q4 = 'F') -- F in any quarter
   and g.stateCode in ('5012020','5012030','5012040','5012050','5012060','5012070','1205010','1205020','1205040','1205050',
-                    '1205070','1200310','1200320','1200330','1200340','1206310','1206320','1206300','1207300')
-  left join ala_fastTests h on h.studentID = a.studentID and h.testName = 'FAST ELA PM3' and h.AL = '1'
+                    '1205070','1200310','1200320','1200330','1200340','1206310','1206320','1206300','1207300') -- Current Classes (5xxxxx = elem, 1xxxxxx = MS/HS
+
+  left join ala_fastTests h on h.studentID = a.studentID and h.testName = 'FAST ELA PM3' and h.AL = '1' -- Looks at most any test with name match (Needs changed for future years)
   left join ala_fastTests i on i.studentID = a.studentID and i.testName = 'FAST Math' and i.date between '2023-04-01' and '2023-06-30' and i.AL = '1'
   left join ala_activeStudents j on j.studentID = a.studentID and j.grade = a.grade
   where
