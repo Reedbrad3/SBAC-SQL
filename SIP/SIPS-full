@@ -35,7 +35,7 @@ from
 
   left join ala_roster_history g on g.studentID = a.studentID and g.schoolYear = 2023 and (g.Q1 = 'F' or g.Q2 = 'F' or g.Q3 = 'F' or g.Q4 = 'F') -- F in any quarter
   and g.stateCode in ('5012020','5012030','5012040','5012050','5012060','5012070','1205010','1205020','1205040','1205050',
-                    '1205070','1200310','1200320','1200330','1200340','1206310','1206320','1206300','1207300') -- Current Classes (5xxxxx = elem, 1xxxxxx = MS/HS
+                    '1205070','1200310','1200320','1200330','1200340','1206310','1206320','1206300','1207300') -- Current Classes (5xxxxx = elem, 1xxxxxx = MS/HS)
 
   left join ala_fastTests h on h.studentID = a.studentID and h.testName = 'FAST ELA PM3' and h.AL = '1' -- Looks at most any test with name match (Needs changed for future years)
   left join ala_fastTests i on i.studentID = a.studentID and i.testName = 'FAST Math' and i.date between '2023-04-01' and '2023-06-30' and i.AL = '1'
