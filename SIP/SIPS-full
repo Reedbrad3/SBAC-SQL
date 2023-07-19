@@ -25,8 +25,8 @@ select distinct
 from
   ala_activeStudents_2223_eoy            a
   join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-school-year] = 2023
-  left join ala_behavior c on  c.studentID    = a.studentID and c.schoolYear = 2023 and c.disActionID in ('ISS','OSS')
-  left join [student-ew] e on e.[student-id] = a.studentID and e.[withdrawal-school-year] = 2023
+  left join ala_behavior c on  c.studentID    = a.studentID and c.schoolYear = 2023 and c.disActionID in ('ISS','OSS') -- Look at suspensions only
+  left join [student-ew] e on e.[student-id] = a.studentID and e.[withdrawal-school-year] = 2023  -- Used for join on grad year (d)
   left join [ent-grd-gy-xref] d on d.[school-year] = 2023 and d.[grad-yr] = cast(e.[withdrawal-grad-yr] as int)
   left join ala_roster_history f on f.studentID = a.studentID and f.schoolYear = 2023 and (f.Q1 = 'F' or f.Q2 = 'F' or f.Q3 = 'F' or f.Q4 = 'F') -- F in any quarter
 
