@@ -39,9 +39,12 @@ from
 
   left join ala_fastTests h on h.studentID = a.studentID and h.testName = 'FAST ELA PM3' and h.AL = '1' -- Looks at most any test with name match (Needs changed for future years)
   left join ala_fastTests i on i.studentID = a.studentID and i.testName = 'FAST Math' and i.date between '2023-04-01' and '2023-06-30' and i.AL = '1'
-  left join ala_activeStudents j on j.studentID = a.studentID and j.grade = a.grade
+
+  left join ala_activeStudents j on j.studentID = a.studentID and j.grade = a.grade --To determine if grade last year = grade this year
+
   where
   a.grade in ('KG','01','02','03','04','05')
+
 group by
   a.studentID,
   a.otherID,
