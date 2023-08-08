@@ -26,3 +26,4 @@ SELECT
 
   where
  [withdrawal-school-year] = 2023
+and a.[withdrawal-code] <> 'DNE'
