@@ -13,7 +13,11 @@ SELECT
        	a.[absence-days],
        	a.[withdrawal-school-year],
       	a.[withdrawal-grad-yr],
-	b.otherID	-- Only included for easy matching in Current Files
+	b.otherID,	-- Only included for easy matching in Current Files
+	b.raceDescription,
+	b.ell,
+	b.homeless,
+	b.priExcep
       
       
      
