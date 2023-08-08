@@ -1,23 +1,24 @@
+--AUG 2023
+--Allows you to get Previous Year Attendance for students
 SELECT 
 	a.[entity-id],
-       a.[student-id],
-       a.[ew-date],
-       a.[entryc-code],
-	   a.[withdrawal-date],
-       a.[withdrawal-code],
-       a.[percent-enrolled],
-       a.[school-id],
-       a.[attendance-days],
-       a.[absence-days],
-       a.[withdrawal-school-year],
-       a.[withdrawal-grad-yr],
-	   b.otherID
+       	a.[student-id],
+       	a.[ew-date],
+       	a.[entryc-code],
+	a.[withdrawal-date],
+       	a.[withdrawal-code],
+       	a.[percent-enrolled],
+       	a.[school-id],
+       	a.[attendance-days],
+       	a.[absence-days],
+       	a.[withdrawal-school-year],
+      	a.[withdrawal-grad-yr],
+	b.otherID	-- Only included for easy matching in Current Files
       
       
      
-  FROM [student-ew]				a
+  FROM [student-ew]			a
   join ala_allStudents_2223_eoy		b on b.studentID = a.[student-id]
 
   where
-  [student-id] = 25151
-  and [withdrawal-school-year] = 2023
+ [withdrawal-school-year] = 2023
