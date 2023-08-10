@@ -1,0 +1,30 @@
+select
+a.otherID,
+a.testName,
+a.grade,
+a.SS,
+a.AL,
+a.date,
+b.[absence-days],
+b.[attendance-days]
+
+from
+ala_fastTests          a
+join [student-ew] b on b.[student-id] = a.studentID
+
+where
+a.testName = 'FAST ELA PM3'
+and a.date > '2023-03-01'
+and b.[withdrawal-school-year] = 2023
+and b.[withdrawal-code] <> 'DNE'
+and b.[attendance-days] <> 0
+
+group by
+a.otherID,
+a.testName,
+a.grade,
+a.SS,
+a.AL,
+a.date,
+b.[absence-days],
+b.[attendance-days]
