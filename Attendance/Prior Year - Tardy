@@ -1,0 +1,31 @@
+select
+  a.studentID,
+  a.otherID,
+  a.fleid,
+  a.lastName,
+  a.firstName,
+  a.entityID,
+  a.entityName,
+  a.grade,
+  a.lunchStatus,
+  count(distinct h.dayStatus) as 'Days Absent',
+  count(distinct j.dayStatus) as 'Days Tardy',
+  a.reasonCode
+  
+ 
+from
+  ala_activeStudents_2223_eoy  a 
+  right join ala_attendanceDaily            h on h.studentID = a.studentID and h.dayStatus in ('D','E','O','P','U','Y') and h.schoolYear = '2023'
+  right join ala_attendanceDaily            j on j.studentID = a.studentID and j.category = 'T' and j.schoolYear = '2023'
+
+group by
+  a.studentID,
+  a.otherID,
+  a.fleid,
+  a.lastName,
+  a.firstName,
+  a.entityID,
+  a.entityName,
+  a.grade,
+  a.lunchStatus,
+  a.reasonCode
