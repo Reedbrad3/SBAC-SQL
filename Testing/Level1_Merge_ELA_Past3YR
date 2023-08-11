@@ -1,0 +1,39 @@
+--AUG BR
+--Merged select FAST and FSA ELA scores
+--Only LVL 1 
+
+select
+a.otherID,
+a.fleID,
+a.testName,
+a.SS,
+a.AL,
+a.date
+
+
+from 
+ala_testScore	a
+
+where
+a.testName = 'FSA ELA'
+and a.AL = 1
+
+UNION
+
+select
+b.otherID,
+b.fleID,
+b.testName,
+b.SS,
+b.AL,
+b.date
+
+from
+ala_fastTests	b
+
+where
+b.testName = 'FAST ELA PM3'
+and b.AL = 1
+
+order by
+date
