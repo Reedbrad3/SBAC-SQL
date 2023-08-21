@@ -1,0 +1,25 @@
+-- bradley Reed
+-- Aug 21,2023
+-- Finds Counts of students in Adavanced classes at each school
+
+Select	*
+from(
+	SELECT 
+	a.entityName,
+	a.courseType,
+	b.raceDescription,
+	a.studentID
+
+	FROM [skyward_STU].[dbo].[ala_roster]	a
+	left join ala_allStudents_2223_eoy b on b.studentID = a.studentID
+
+	where
+	a.courseType in ('AP','AIC','IB') -- Only looking at Advanced Course Types
+) as src  -- Name Source Table
+PIVOT (
+count(studentID)
+for raceDescription in ([Black or African American],[Hispanic or Latino],[White],[Asian],[Multi-Racial],[American Indian or Alaska],[Pacific Islander]))
+as PivotTableRace
+-- Pivot to show all schools in one
+	
+
