@@ -3,8 +3,8 @@
 
 DECLARE @equity table 
 (--gender varchar(40),
- raceDescription varchar(40),
- --ell varchar(5),
+ --raceDescription varchar(40),
+ ell varchar(5),
  count INT,
  percentag DECIMAL(10,4)
  );
@@ -14,8 +14,8 @@ insert into
 
 select distinct
 --b.gender,
-b.raceDescription,
---b.ell,
+--b.raceDescription,
+b.ell,
 COUNT(DISTINCT r.studentID) AS 'count',
 (COUNT(DISTINCT r.studentID) * 1.0) / (SELECT COUNT(DISTINCT r3.studentID) FROM ala_roster_history r3
                                             JOIN school s3 ON s3.[school-id] = r3.entityID
@@ -34,8 +34,8 @@ and r.schoolYear = 2023
 and b.grade in ('09','10','11','12')
 group by
 --b.gender,
-b.raceDescription
---b.ell
+--b.raceDescription
+b.ell
 
 select *
  from @equity;
