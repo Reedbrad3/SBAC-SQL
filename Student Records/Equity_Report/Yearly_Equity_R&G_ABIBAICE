@@ -3,8 +3,8 @@
 
 DECLARE @equity table 
 (--gender varchar(40),
- --raceDescription varchar(40),
- ell varchar(5),
+ raceDescription varchar(40),
+ --ell varchar(5),
  count INT,
  percentag DECIMAL(10,4)
  );
@@ -14,13 +14,13 @@ insert into
 
 select distinct
 --b.gender,
---b.raceDescription,
-b.ell,
+b.raceDescription,
+--b.ell,
 COUNT(DISTINCT r.studentID) AS 'count',
 (COUNT(DISTINCT r.studentID) * 1.0) / (SELECT COUNT(DISTINCT r3.studentID) FROM ala_roster_history r3
                                             JOIN school s3 ON s3.[school-id] = r3.entityID
                                             JOIN ala_allStudents_2223_eoy b3 ON b3.studentID = r3.studentID
-                                            WHERE r3.schoolYear = 2023 and b3.grade in ('09','10','11','12') and r3.courseLevel = 3) as ' PCT' --r3.courseType = 'AP' OR r3.courseType = 'AIC' OR r3.courseName LIKE '%AICE%' OR r3.courseType = 'IB' OR r3.courseName LIKE 'IB%' OR r3.courseName LIKE 'FL PRE-IB%') AS 'percentag'
+                                            WHERE r3.schoolYear = 2023 and b3.grade in ('09','10','11','12') and r3.courseName in ('SFCC  HS DUAL E' , 'UF Dual Enrollm')) as 'PCT'--r3.courseLevel = 3) as ' PCT' --r3.courseType = 'AP' OR r3.courseType = 'AIC' OR r3.courseName LIKE '%AICE%' OR r3.courseType = 'IB' OR r3.courseName LIKE 'IB%' OR r3.courseName LIKE 'FL PRE-IB%') AS 'percentag'
 											
 
 from
@@ -29,13 +29,14 @@ from
   join ala_allStudents_2223_eoy b on b.studentID = r.studentID
 where
 --r.courseType = 'AP' or courseType = 'AIC' or courseName like '%AICE%' or courseType = 'IB' or courseName like 'IB%' or courseName like 'FL PRE-IB%' or courseType = 'HR'
-r.courseLevel = 3
+--r.courseLevel = 3
+r.courseName in ('SFCC  HS DUAL E','UF Dual Enrollm')
 and r.schoolYear = 2023
 and b.grade in ('09','10','11','12')
 group by
 --b.gender,
---b.raceDescription
-b.ell
+b.raceDescription
+--b.ell
 
 select *
  from @equity;
