@@ -27,7 +27,7 @@ select distinct
 
 from
   ala_activeStudents_2223_eoy            a
-  left join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-date] ='2023-05-31' 
+  left join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-date] ='2023-05-31'   and b.[school-id] not in ('3900','7004','C924','0924','7023')
   left join ala_behavior c on  c.studentID    = a.studentID and c.schoolYear = 2023 and c.disActionID in ('ISS','OSS') -- Look at suspensions only
   --left join [student-ew] e on e.[student-id] = a.studentID and e.[withdrawal-date] between '2022-08-10' and '2023-07-01'  -- Used for join on grad year (d)
   --left join [ent-grd-gy-xref] d on d.[school-year] = 2023 and d.[grad-yr] = cast(e.[withdrawal-grad-yr] as int)
@@ -50,7 +50,7 @@ from
   a.grade not in ('P3','P1','P2','P4','GD','30','31')
   and k.FLEID = a.fleID and k.school = a.entityID -- Survey 2 Match
   and l.FLEID = a.fleID and l.school = a.entityID -- Survey 3 Match
-  --and a.otherID = 335583
+
 
 
 
