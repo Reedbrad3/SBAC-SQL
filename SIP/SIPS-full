@@ -1,7 +1,3 @@
--- BR / 2023 / Current days missed & suspensions by student
---The goal of the SQL is to pull parts of the sips plan (A,B,C). 
---Count of Students
-
 select distinct
   a.studentID, -- Student information for deeper dive
   a.otherID,
@@ -17,6 +13,7 @@ select distinct
   sum(distinct b.[attendance-days]) as 'att',  -- start part a.early warning
   sum(distinct b.[absence-days]) as 'abs',
   sum(distinct b.[attendance-days]+b.[absence-days]) as 'tot',
+  case when sum(b.[absence-days]/(b.[absence-days]+b.[attendance-days]))>=.1 then 1 else 0 end as 'PCTGR10',
   count(distinct c.studentID) as 'Suspensions',
   count(distinct f.studentID) as 'F_ELA',
   count(distinct g.studentID) as 'F_MATH',
@@ -29,7 +26,7 @@ select distinct
 
 from
   ala_activeStudents_2223_eoy            a
-  left join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-date] >'2023-05-01'   and b.[school-id] not in ('3900','7004','C924','0924','7023')
+  left join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-date] >'2023-05-01'   and b.[school-id] not in ('3900','7004','C924','0924','7023') and b.[attendance-days] <> 0
   left join ala_behavior c on  c.studentID    = a.studentID and c.schoolYear = 2023 and c.disActionID in ('ISS','OSS') -- Look at suspensions only
   left join [student-ew] e on e.[student-id] = a.studentID and e.[withdrawal-date] between '2022-08-10' and '2023-07-01'  -- Used for join on grad year (d)
   left join [ent-grd-gy-xref] d on d.[school-year] = 2023 and d.[grad-yr] = cast(e.[withdrawal-grad-yr] as int)
