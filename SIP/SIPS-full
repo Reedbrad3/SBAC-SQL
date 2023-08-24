@@ -13,7 +13,7 @@ select distinct
   sum(distinct b.[attendance-days]) as 'att',  -- start part a.early warning
   sum(distinct b.[absence-days]) as 'abs',
   sum(distinct b.[attendance-days]+b.[absence-days]) as 'tot',
-  case when sum(b.[absence-days]/(b.[absence-days]+b.[attendance-days]))>=.1 then 1 else 0 end as 'PCTGR10',
+  case when sum(b.[absence-days])/sum(b.[absence-days]+b.[attendance-days])>=.1 then 1 else 0 end as 'PCTGR10',
   count(distinct c.studentID) as 'Suspensions',
   count(distinct f.studentID) as 'F_ELA',
   count(distinct g.studentID) as 'F_MATH',
