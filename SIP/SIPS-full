@@ -5,9 +5,12 @@
 select distinct
   a.studentID, -- Student information for deeper dive
   a.otherID,
+  a.ell,
+  a.raceDescription,
+  a.priExcep,
   a.entityID,
   a.grade,
-  b.[withdrawal-school-year],
+  b.[withdrawal-date],
 
   sum(distinct b.[attendance-days]) as 'att',  -- start part a.early warning
   sum(distinct b.[absence-days]) as 'abs',
@@ -24,10 +27,10 @@ select distinct
 
 from
   ala_activeStudents_2223_eoy            a
-  join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-school-year] = 2023
+  left join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-date] between '2022-08-10' and '2023-07-01' 
   left join ala_behavior c on  c.studentID    = a.studentID and c.schoolYear = 2023 and c.disActionID in ('ISS','OSS') -- Look at suspensions only
-  left join [student-ew] e on e.[student-id] = a.studentID and e.[withdrawal-school-year] = 2023  -- Used for join on grad year (d)
-  left join [ent-grd-gy-xref] d on d.[school-year] = 2023 and d.[grad-yr] = cast(e.[withdrawal-grad-yr] as int)
+  --left join [student-ew] e on e.[student-id] = a.studentID and e.[withdrawal-date] between '2022-08-10' and '2023-07-01'  -- Used for join on grad year (d)
+  --left join [ent-grd-gy-xref] d on d.[school-year] = 2023 and d.[grad-yr] = cast(e.[withdrawal-grad-yr] as int)
   left join ala_roster_history f on f.studentID = a.studentID and f.schoolYear = 2023 and (f.Q1 in ('F','U') or f.Q2 in ('F','U') or f.Q3 in ('F','U') or f.Q4 in ('F','U')) -- F in any quarter
 
   and f.stateCode in ('5010041','5010042','5010043','5010044','5010045','5010046','1001010','1001020','1001040',
@@ -37,22 +40,25 @@ from
   and g.stateCode in ('5012020','5012030','5012040','5012050','5012060','5012070','1205010','1205020','1205040','1205050',
                     '1205070','1200310','1200320','1200330','1200340','1206310','1206320','1206300','1207300') -- Current Classes (5xxxxx = elem, 1xxxxxx = MS/HS)
 
-  left join ala_fastTests h on h.studentID = a.studentID and h.testName = 'FAST ELA PM3' and h.AL = '1' -- Looks at most any test with name match (Needs changed for future years)
-  left join ala_fastTests i on i.studentID = a.studentID and i.testName = 'FAST Math' and i.date between '2023-04-01' and '2023-06-30' and i.AL = '1'
+  left join ala_testScore h on h.studentID = a.studentID and h.testName = 'FAST ELA PM3' and h.AL = '1' -- Looks at most any test with name match (Needs changed for future years)
+  left join ala_testScore i on i.studentID = a.studentID and i.testName = 'FAST Math' and i.date between '2023-04-01' and '2023-06-30' and i.AL = '1'
 
   left join ala_activeStudents j on j.studentID = a.studentID and j.grade = a.grade --To determine if grade last year = grade this year
-  left join ala_survey2demo2223 k on k.studentID = a.studentID -- Survey 2 Match
-  left join	ala_survey2demo2223 l on l.studentID = a.studentID -- Survey 3 Match
-  where
+  join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = a.schoolID -- Survey 2 Match
+  join ala_survey3demo2223 l on l.FLEID = a.fleID and l.school = a.schoolID -- Survey 3 Match
+ where
   a.grade not in ('P3','P1','P2','P4','GD','30','31')
-  and k.studentID = a.studentID -- Survey 2 Match
-  and k.school = a.entityID
-  and l.studentID = a.studentID -- Survey 3 Match
-  and l.school = a.entityID
+  --and k.studentID = a.studentID -- Survey 2 Match
+  --and k.school = a.entityID
+  --and l.studentID = a.studentID -- Survey 3 Match
+  --and l.school = a.entityID
 
 group by
   a.studentID,
   a.otherID,
+  a.ell,
+  a.raceDescription,
+  a.priExcep,
   a.entityID,
   a.grade,
-  b.[withdrawal-school-year]
+  b.[withdrawal-date]
