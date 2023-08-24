@@ -54,6 +54,8 @@ from
   and l.school = a.entityID
   --and a.otherID = 335583
 
+
+
 group by
   a.studentID,
   a.otherID,
@@ -63,3 +65,6 @@ group by
   a.entityID,
   a.grade,
   b.[withdrawal-date]
+
+having 
+ sum(distinct b.[attendance-days]+b.[absence-days]) IS NOT NULL;
