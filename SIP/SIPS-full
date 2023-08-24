@@ -9,6 +9,8 @@ select distinct
   a.raceDescription,
   a.priExcep,
   a.entityID,
+  k.school,
+  l.school,
   a.grade,
   b.[withdrawal-date],
 
@@ -27,10 +29,10 @@ select distinct
 
 from
   ala_activeStudents_2223_eoy            a
-  left join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-date] ='2023-05-31'   and b.[school-id] not in ('3900','7004','C924','0924','7023')
+  left join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-date] >'2023-05-01'   and b.[school-id] not in ('3900','7004','C924','0924','7023')
   left join ala_behavior c on  c.studentID    = a.studentID and c.schoolYear = 2023 and c.disActionID in ('ISS','OSS') -- Look at suspensions only
-  --left join [student-ew] e on e.[student-id] = a.studentID and e.[withdrawal-date] between '2022-08-10' and '2023-07-01'  -- Used for join on grad year (d)
-  --left join [ent-grd-gy-xref] d on d.[school-year] = 2023 and d.[grad-yr] = cast(e.[withdrawal-grad-yr] as int)
+  left join [student-ew] e on e.[student-id] = a.studentID and e.[withdrawal-date] between '2022-08-10' and '2023-07-01'  -- Used for join on grad year (d)
+  left join [ent-grd-gy-xref] d on d.[school-year] = 2023 and d.[grad-yr] = cast(e.[withdrawal-grad-yr] as int)
   left join ala_roster_history f on f.studentID = a.studentID and f.schoolYear = 2023 and (f.Q1 in ('F','U') or f.Q2 in ('F','U') or f.Q3 in ('F','U') or f.Q4 in ('F','U')) -- F in any quarter
 
   and f.stateCode in ('5010041','5010042','5010043','5010044','5010045','5010046','1001010','1001020','1001040',
@@ -44,12 +46,12 @@ from
   left join ala_testScore i on i.studentID = a.studentID and i.testName = 'FAST Math' and i.date between '2023-04-01' and '2023-06-30' and i.AL = '1'
 
   left join ala_activeStudents j on j.studentID = a.studentID and j.grade = a.grade --To determine if grade last year = grade this year
-  join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = a.schoolID -- Survey 2 Match
-  join ala_survey3demo2223 l on l.FLEID = a.fleID and l.school = a.schoolID -- Survey 3 Match
+  join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = a.entityID -- Survey 2 Match
+  join ala_survey3demo2223 l on l.FLEID = a.fleID and l.school = a.entityID -- Survey 3 Match
  where
-  a.grade not in ('P3','P1','P2','P4','GD','30','31')
-  and k.FLEID = a.fleID and k.school = a.entityID -- Survey 2 Match
-  and l.FLEID = a.fleID and l.school = a.entityID -- Survey 3 Match
+  a.grade not in ('P0','P3','P1','P2','P4','GD','30','31')
+  --and k.FLEID = a.fleID and k.school = a.entityID -- Survey 2 Match
+  --and l.FLEID = a.fleID and l.school = a.entityID -- Survey 3 Match
 
 
 
@@ -61,6 +63,8 @@ group by
   a.raceDescription,
   a.priExcep,
   a.entityID,
+  k.school,
+  l.school,
   a.grade,
   b.[withdrawal-date]
 
