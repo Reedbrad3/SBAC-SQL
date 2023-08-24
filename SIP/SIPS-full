@@ -23,7 +23,7 @@ select distinct
 
   count(distinct j.studentID) as 'Repeat_Current_Year', -- Part c. early warning
 
-  count(distinct c.studentID)+count(distinct f.studentID)+count(distinct g.studentID)+count(distinct h.studentID)+count(distinct i.studentID)+count(distinct j.studentID) as 'two or more' -- Part b. early warning
+  case when count(distinct c.studentID)+count(distinct f.studentID)+count(distinct g.studentID)+count(distinct h.studentID)+count(distinct i.studentID)+count(distinct j.studentID) > 1 then 1 else 0 end as 'two or more' -- Part b. early warning
 
 from
   ala_activeStudents_2223_eoy            a
@@ -65,6 +65,9 @@ group by
   a.entityID,
   a.grade,
   b.[withdrawal-date]
+
+having 
+ sum(distinct b.[attendance-days]+b.[absence-days]) IS NOT NULL;
 
 having 
  sum(distinct b.[attendance-days]+b.[absence-days]) IS NOT NULL;
