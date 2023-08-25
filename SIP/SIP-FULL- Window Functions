@@ -1,11 +1,15 @@
 --BR 8/25
 -- Creates SIP table with window functions for each school/grade
 
+--Used to configure the students who missed 10% or more days
 ;with StudentAbs as (
 SELECT
 a.studentID,
 a.entityID,
 a.grade,
+a.ell,
+a.raceDescription,
+a.priExcep,
 case when sum(b.[absence-days])/sum(b.[absence-days]+b.[attendance-days])>=.1 then 1 end as 'StudentAbs'
 from
 ala_activeStudents_2223_eoy	a
@@ -15,7 +19,10 @@ left join [student-ew] b on b.[student-id] = a.studentID and b.[withdrawal-date]
 group by
 a.studentID,
 a.entityID,
-a.grade
+a.grade,
+a.ell,
+a.raceDescription,
+a.priExcep
 having
 case when sum(b.[absence-days])/sum(b.[absence-days]+b.[attendance-days])>=.1 then count(distinct a.studentID) end = 1
 )
@@ -23,13 +30,19 @@ case when sum(b.[absence-days])/sum(b.[absence-days]+b.[attendance-days])>=.1 th
 select
 sa2.entityID,
 sa2.grade,
+--sa2.ell,
+--sa2.raceDescription,
+--sa2.priExcep,
 sum(sa2.studentAbs) as 'TotalAbs'
 from
 StudentAbs	sa2
 group by
 sa2.entityID,
 sa2.grade
-)
+--sa2.ell,
+--sa2.raceDescription,
+--sa2.priExcep
+)--Used to configure the students who missed 10% or more days 
 
 
 select distinct
