@@ -48,13 +48,13 @@ from
   left join ala_testScore i on i.studentID = a.studentID and i.testName = 'FAST Math' and i.date between '2023-04-01' and '2023-06-30' and i.AL = '1'
 
   left join ala_activeStudents j on j.studentID = a.studentID and j.grade = a.grade --To determine if grade last year = grade this year
-  inner join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = b.[school-id] -- Survey 2 Match
-  inner join ala_survey3demo2223 l on l.FLEID = a.fleID and k.school = b.[school-id] -- Survey 3 Match
+  inner join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 2 Match
+  inner join ala_survey3demo2223 l on l.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 3 Match
  where
   a.grade not in ('P0','P3','P1','P2','P4','GD','30','31')
   and a.entityID = k.school  -- Survey 2 Match
   and a.entityID = l.school -- Survey 3 Match
-  --and a.otherID = 295285 -- Tester
+  -- and a.otherID = 297114  -- Test Student
 
 
 
