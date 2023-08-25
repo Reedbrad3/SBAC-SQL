@@ -1,3 +1,7 @@
+--BR 8/23
+-- Pulls all parts for SIP with 2/3 Match
+-- Only shows most recent attendance
+
 select distinct
   a.studentID, -- Student information for deeper dive
   a.otherID,
@@ -50,7 +54,7 @@ from
   a.grade not in ('P0','P3','P1','P2','P4','GD','30','31')
   and a.entityID = k.school  -- Survey 2 Match
   and a.entityID = l.school -- Survey 3 Match
-  and a.otherID = 295285
+  --and a.otherID = 295285 -- Tester
 
 
 
