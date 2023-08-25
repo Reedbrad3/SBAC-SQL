@@ -1,6 +1,35 @@
 --BR 8/25
 -- Creates SIP table with window functions for each school/grade
 
+;with StudentAbs as (
+SELECT
+a.studentID,
+a.entityID,
+a.grade,
+case when sum(b.[absence-days])/sum(b.[absence-days]+b.[attendance-days])>=.1 then 1 end as 'StudentAbs'
+from
+ala_activeStudents_2223_eoy	a
+left join [student-ew] b on b.[student-id] = a.studentID and b.[withdrawal-date] BETWEEN '2023-05-01' AND '2023-06-01' AND b.[school-id] NOT IN ('3900','7004','C924','0924','7023','9025','400') AND b.[attendance-days] <> 0
+group by
+a.studentID,
+a.entityID,
+a.grade
+having
+case when sum(b.[absence-days])/sum(b.[absence-days]+b.[attendance-days])>=.1 then count(distinct a.studentID) end = 1
+)
+,StudentAbs2 as (
+select
+sa2.entityID,
+sa2.grade,
+sum(sa2.studentAbs) as 'TotalAbs'
+from
+StudentAbs	sa2
+group by
+sa2.entityID,
+sa2.grade
+)
+
+
 select distinct
   --a.studentID, -- Student information for deeper dive
   --a.otherID,
@@ -17,7 +46,9 @@ select distinct
   --sum(distinct b.[attendance-days]) as 'att',  -- start part a.early warning
   --sum(distinct b.[absence-days]) as 'abs',
   --sum(distinct b.[attendance-days]+b.[absence-days]) as 'tot',
-  sum(case when sum(b.[absence-days])/sum(b.[absence-days]+b.[attendance-days])>=.1 then 1 else 0 end) OVER(PARTITION BY a.entityID, a.grade) as 'PCTGR10',
+  --sum(case when sum(b.[absence-days])/sum(b.[absence-days])+sum(b.[attendance-days]))>=.1 then count(distinct a.studentID) else 0 end) OVER(PARTITION BY a.entityID, a.grade) as 'PCTGR10',
+  --MAX(StudentAbs.Studentabs) as StudentCount
+  sum(max(sa3.TotalAbs)) OVER (PARTITION BY a.entityID, a.grade) as 'PCTGR10',
   sum(count(distinct c.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'Suspensions',
   sum(count(distinct f.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'F_ELA',
   sum(count(distinct g.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'F_MATH',
@@ -49,11 +80,13 @@ from
   left join ala_activeStudents j on j.studentID = a.studentID and j.grade = a.grade --To determine if grade last year = grade this year
   inner join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 2 Match
   inner join ala_survey3demo2223 l on l.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 3 Match
+  left join StudentAbs2 sa3 on sa3.entityID = a.entityID and sa3.grade = a.grade
  where
   a.grade not in ('P0','P3','P1','P2','P4','GD','30','31')
   and a.entityID = k.school  -- Survey 2 Match
   and a.entityID = l.school -- Survey 3 Match
   --and a.otherID = 374635  -- Test Student
+
 
 
 
