@@ -1,6 +1,7 @@
 select distinct
   a.studentID, -- Student information for deeper dive
   a.otherID,
+  a.fleID,
   a.ell,
   a.raceDescription,
   a.priExcep,
@@ -43,19 +44,20 @@ from
   left join ala_testScore i on i.studentID = a.studentID and i.testName = 'FAST Math' and i.date between '2023-04-01' and '2023-06-30' and i.AL = '1'
 
   left join ala_activeStudents j on j.studentID = a.studentID and j.grade = a.grade --To determine if grade last year = grade this year
-  join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = a.entityID -- Survey 2 Match
-  join ala_survey3demo2223 l on l.FLEID = a.fleID and l.school = a.entityID -- Survey 3 Match
+  inner join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = b.[school-id] -- Survey 2 Match
+  inner join ala_survey3demo2223 l on l.FLEID = a.fleID and k.school = b.[school-id] -- Survey 3 Match
  where
   a.grade not in ('P0','P3','P1','P2','P4','GD','30','31')
-  --and k.FLEID = a.fleID and k.school = a.entityID -- Survey 2 Match
-  --and l.FLEID = a.fleID and l.school = a.entityID -- Survey 3 Match
-
+  and a.entityID = k.school  -- Survey 2 Match
+  and a.entityID = l.school -- Survey 3 Match
+  and a.otherID = 295285
 
 
 
 group by
   a.studentID,
   a.otherID,
+  a.fleID,
   a.ell,
   a.raceDescription,
   a.priExcep,
