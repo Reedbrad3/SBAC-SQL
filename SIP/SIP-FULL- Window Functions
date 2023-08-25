@@ -2,6 +2,7 @@
 -- Creates SIP table with window functions for each school/grade
 
 --Used to configure the students who missed 10% or more days
+--Used to configure the students who missed 10% or more days
 ;with StudentAbs as (
 SELECT
 a.studentID,
@@ -73,7 +74,7 @@ select distinct
 
   sum(count(distinct j.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'Repeat_Current_Year' -- Part c. early warning
 
-  --sum(case when count(distinct c.studentID)+count(distinct f.studentID)+count(distinct g.studentID)+count(distinct h.studentID)+count(distinct i.studentID)+count(distinct j.studentID) > 1 then 1 else 0 end) OVER (PARTITION BY a.entityID, a.grade) as 'two or more' -- Part b. early warning
+  --sum(count(distinct c.studentID)+count(distinct f.studentID)+count(distinct g.studentID)+count(distinct h.studentID)+count(distinct i.studentID)+count(distinct j.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'two or more' -- Part b. early warning
 
 from
   ala_activeStudents_2223_eoy            a
