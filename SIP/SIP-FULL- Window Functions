@@ -85,7 +85,7 @@ from
   left join ala_roster_history f on f.studentID = a.studentID and f.schoolYear = 2023 and (f.Q1 in ('F','U') or f.Q2 in ('F','U') or f.Q3 in ('F','U') or f.Q4 in ('F','U')) -- F in any quarter
 
   and f.stateCode in ('5010041','5010042','5010043','5010044','5010045','5010046','1001010','1001020','1001040',
-                      '1001050','1001070','1001080','1001310','1001320','1001340','1001350','1001370','1001380') -- Current Classes (5xxxxx = elem, 1xxxxxx = MS/HS
+                      '1001050','1001070','1001080','1001310','1001320','1001340','1001350','1001370','1001380') -- Current Classes (5xxxxx = elem, 1xxxxxx = MS/HS)
 
   left join ala_roster_history g on g.studentID = a.studentID and g.schoolYear = 2023 and (g.Q1 in ('F','U') or g.Q2 in ('F','U') or g.Q3 in ('F','U') or g.Q4 in ('F','U')) -- F in any quarter
   and g.stateCode in ('5012020','5012030','5012040','5012050','5012060','5012070','1205010','1205020','1205040','1205050',
