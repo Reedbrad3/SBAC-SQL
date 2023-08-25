@@ -1,0 +1,74 @@
+--BR 8/25
+-- Creates SIP table with window functions for each school/grade
+
+select distinct
+  --a.studentID, -- Student information for deeper dive
+  --a.otherID,
+  --a.fleID,
+  --a.ell,
+  --a.raceDescription,
+  --a.priExcep,
+  a.entityID,
+  --k.school,
+  --l.school,
+  a.grade,
+  --b.[withdrawal-date],
+
+  --sum(distinct b.[attendance-days]) as 'att',  -- start part a.early warning
+  --sum(distinct b.[absence-days]) as 'abs',
+  --sum(distinct b.[attendance-days]+b.[absence-days]) as 'tot',
+  sum(case when sum(b.[absence-days])/sum(b.[absence-days]+b.[attendance-days])>=.1 then 1 else 0 end) OVER(PARTITION BY a.entityID, a.grade) as 'PCTGR10',
+  sum(count(distinct c.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'Suspensions',
+  sum(count(distinct f.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'F_ELA',
+  sum(count(distinct g.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'F_MATH',
+  sum(count(distinct h.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'FSA_ELA_1',
+  sum(count(distinct i.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'FSA_MATH_1', -- end part a. early warning
+
+  sum(count(distinct j.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'Repeat_Current_Year', -- Part c. early warning
+
+  sum(case when count(distinct c.studentID)+count(distinct f.studentID)+count(distinct g.studentID)+count(distinct h.studentID)+count(distinct i.studentID)+count(distinct j.studentID) > 1 then 1 else 0 end) OVER (PARTITION BY a.entityID, a.grade) as 'two or more' -- Part b. early warning
+
+from
+  ala_activeStudents_2223_eoy            a
+  left join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-date] between '2023-05-01' and '2023-06-01'  and b.[school-id] not in ('3900','7004','C924','0924','7023','9025','400') and b.[attendance-days] <> 0
+  left join ala_behavior c on  c.studentID    = a.studentID and c.schoolYear = 2023 and c.disActionID in ('ISS','OSS') -- Look at suspensions only
+  left join [student-ew] e on e.[student-id] = a.studentID and e.[withdrawal-date] between '2022-08-10' and '2023-07-01'  -- Used for join on grad year (d)
+  left join [ent-grd-gy-xref] d on d.[school-year] = 2023 and d.[grad-yr] = cast(e.[withdrawal-grad-yr] as int)
+  left join ala_roster_history f on f.studentID = a.studentID and f.schoolYear = 2023 and (f.Q1 in ('F','U') or f.Q2 in ('F','U') or f.Q3 in ('F','U') or f.Q4 in ('F','U')) -- F in any quarter
+
+  and f.stateCode in ('5010041','5010042','5010043','5010044','5010045','5010046','1001010','1001020','1001040',
+                      '1001050','1001070','1001080','1001310','1001320','1001340','1001350','1001370','1001380') -- Current Classes (5xxxxx = elem, 1xxxxxx = MS/HS
+
+  left join ala_roster_history g on g.studentID = a.studentID and g.schoolYear = 2023 and (g.Q1 in ('F','U') or g.Q2 in ('F','U') or g.Q3 in ('F','U') or g.Q4 in ('F','U')) -- F in any quarter
+  and g.stateCode in ('5012020','5012030','5012040','5012050','5012060','5012070','1205010','1205020','1205040','1205050',
+                    '1205070','1200310','1200320','1200330','1200340','1206310','1206320','1206300','1207300') -- Current Classes (5xxxxx = elem, 1xxxxxx = MS/HS)
+
+  left join ala_testScore h on h.studentID = a.studentID and h.testName = 'FAST ELA PM3' and h.AL = '1' -- Looks at most any test with name match (Needs changed for future years)
+  left join ala_testScore i on i.studentID = a.studentID and i.testName = 'FAST Math' and i.date between '2023-04-01' and '2023-06-30' and i.AL = '1'
+
+  left join ala_activeStudents j on j.studentID = a.studentID and j.grade = a.grade --To determine if grade last year = grade this year
+  inner join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 2 Match
+  inner join ala_survey3demo2223 l on l.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 3 Match
+ where
+  a.grade not in ('P0','P3','P1','P2','P4','GD','30','31')
+  and a.entityID = k.school  -- Survey 2 Match
+  and a.entityID = l.school -- Survey 3 Match
+  --and a.otherID = 374635  -- Test Student
+
+
+
+group by
+  --a.studentID,
+  --a.otherID,
+  --a.fleID,
+  --a.ell,
+  --a.raceDescription,
+  --a.priExcep,
+  a.entityID,
+  --k.school,
+  --l.school,
+  a.grade
+  --b.[withdrawal-date]
+
+--having 
+ --sum(distinct b.[attendance-days]+b.[absence-days]) IS NOT NULL;
