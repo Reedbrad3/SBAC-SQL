@@ -10,6 +10,8 @@ case when sum(b.[absence-days])/sum(b.[absence-days]+b.[attendance-days])>=.1 th
 from
 ala_activeStudents_2223_eoy	a
 left join [student-ew] b on b.[student-id] = a.studentID and b.[withdrawal-date] BETWEEN '2023-05-01' AND '2023-06-01' AND b.[school-id] NOT IN ('3900','7004','C924','0924','7023','9025','400') AND b.[attendance-days] <> 0
+  inner join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 2 Match
+  inner join ala_survey3demo2223 l on l.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 3 Match
 group by
 a.studentID,
 a.entityID,
