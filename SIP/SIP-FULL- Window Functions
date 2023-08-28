@@ -11,12 +11,12 @@ a.grade,
 a.ell,
 a.raceDescription,
 a.priExcep,
-case when sum(b.[absence-days])/sum(b.[absence-days]+b.[attendance-days])>=.1 then 1 end as 'StudentAbs'
+case when sum(b.[absence-days])/sum(b.[absence-days]+b.[attendance-days])>=.1 then 1 else 0 end as 'StudentAbs'
 from
 ala_activeStudents_2223_eoy	a
 left join [student-ew] b on b.[student-id] = a.studentID and b.[withdrawal-date] BETWEEN '2023-05-01' AND '2023-06-01' AND b.[school-id] NOT IN ('3900','7004','C924','0924','7023','9025','400') AND b.[attendance-days] <> 0
-  inner join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 2 Match
-  inner join ala_survey3demo2223 l on l.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 3 Match
+  inner join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = a.entityID and k.school = b.[calendar-id] -- Survey 2 Match
+  inner join ala_survey3demo2223 l on l.FLEID = a.fleID and l.school = a.entityID and l.school = b.[calendar-id] -- Survey 3 Match
 group by
 a.studentID,
 a.entityID,
@@ -24,9 +24,47 @@ a.grade,
 a.ell,
 a.raceDescription,
 a.priExcep
-having
-case when sum(b.[absence-days])/sum(b.[absence-days]+b.[attendance-days])>=.1 then count(distinct a.studentID) end = 1
+),
+
+TwoorMore as (
+select
+a.studentID,
+--case when count(  c.studentID + f.studentID + g.studentID + h.studentID + i.studentID + j.studentID + sa4.studentID)>1 then 1 else 0 end as 'TwoorMore',
+case when (count(distinct c.studentID) + count(distinct f.studentID) + count(distinct g.studentID) + count(distinct h.studentID) + count(distinct i.studentID) + count(distinct j.studentID) + count(distinct sa4.studentID))>1 then 1 else 0 end as 'Two',
+a.entityID,
+a.grade
+
+from
+ala_activeStudents_2223_eoy            a
+  left join [student-ew] b on  b.[student-id] = a.studentID and b.[withdrawal-date] between '2023-05-01' and '2023-06-01'  and b.[school-id] not in ('3900','7004','C924','0924','7023','9025','400') and b.[attendance-days] <> 0
+  left join ala_behavior c on  c.studentID    = a.studentID and c.schoolYear = 2023 and c.disActionID in ('ISS','OSS') -- Look at suspensions only
+  left join [student-ew] e on e.[student-id] = a.studentID and e.[withdrawal-date] between '2022-08-10' and '2023-07-01'  -- Used for join on grad year (d)
+  left join [ent-grd-gy-xref] d on d.[school-year] = 2023 and d.[grad-yr] = cast(e.[withdrawal-grad-yr] as int)
+  left join ala_roster_history f on f.studentID = a.studentID and f.schoolYear = 2023 and (f.Q1 in ('F','U') or f.Q2 in ('F','U') or f.Q3 in ('F','U') or f.Q4 in ('F','U')) -- F in any quarter
+
+  and f.stateCode in ('5010041','5010042','5010043','5010044','5010045','5010046','1001010','1001020','1001040',
+                      '1001050','1001070','1001080','1001310','1001320','1001340','1001350','1001370','1001380') -- Current Classes (5xxxxx = elem, 1xxxxxx = MS/HS)
+
+  left join ala_roster_history g on g.studentID = a.studentID and g.schoolYear = 2023 and (g.Q1 in ('F','U') or g.Q2 in ('F','U') or g.Q3 in ('F','U') or g.Q4 in ('F','U')) -- F in any quarter
+  and g.stateCode in ('5012020','5012030','5012040','5012050','5012060','5012070','1205010','1205020','1205040','1205050',
+                    '1205070','1200310','1200320','1200330','1200340','1206310','1206320','1206300','1207300') -- Current Classes (5xxxxx = elem, 1xxxxxx = MS/HS)
+
+  left join ala_testScore h on h.studentID = a.studentID and h.testName = 'FAST ELA PM3' and h.AL = '1' -- Looks at most any test with name match (Needs changed for future years)
+  left join ala_testScore i on i.studentID = a.studentID and i.testName = 'FAST Math' and i.date between '2023-04-01' and '2023-06-30' and i.AL = '1'
+
+  left join ala_activeStudents j on j.studentID = a.studentID and j.grade = a.grade --To determine if grade last year = grade this year
+  inner join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 2 Match
+  inner join ala_survey3demo2223 l on l.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 3 Match
+  left join StudentAbs sa4 on sa4.studentID = a.studentID and sa4.StudentAbs = 1
+group by
+a.studentID,
+a.entityID,
+a.grade
+
 )
+--select * from TwoorMore
+
+
 --,StudentAbs2 as (
 --select
 --sa2.entityID,
@@ -72,8 +110,8 @@ select distinct
   sum(count(distinct h.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'FSA_ELA_1',
   sum(count(distinct i.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'FSA_MATH_1', -- end part a. early warning
 
-  sum(count(distinct j.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'Repeat_Current_Year' -- Part c. early warning
-
+  sum(count(distinct j.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'Repeat_Current_Year', -- Part c. early warning
+  sum(count(distinct sa5.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'Two or More'
   --sum(count(distinct c.studentID)+count(distinct f.studentID)+count(distinct g.studentID)+count(distinct h.studentID)+count(distinct i.studentID)+count(distinct j.studentID)) OVER (PARTITION BY a.entityID, a.grade) as 'two or more' -- Part b. early warning
 
 from
@@ -98,12 +136,14 @@ from
   inner join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 2 Match
   inner join ala_survey3demo2223 l on l.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 3 Match
   --left join StudentAbs2 sa3 on sa3.entityID = a.entityID and sa3.grade = a.grade
-  left join StudentAbs sa4 on sa4.studentID = a.studentID
+  left join StudentAbs sa4 on sa4.studentID = a.studentID and sa4.StudentAbs = 1
+  left join TwoorMore sa5 on sa5.studentID = a.studentID AND sa5.Two = 1
  where
   a.grade not in ('P0','P3','P1','P2','P4','GD','30','31')
   and a.entityID = k.school  -- Survey 2 Match
   and a.entityID = l.school -- Survey 3 Match
   --and a.otherID = 374635  -- Test Student
+  and a.entityID = '0431'
 
 
 
