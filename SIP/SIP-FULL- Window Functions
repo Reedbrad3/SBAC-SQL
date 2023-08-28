@@ -53,8 +53,8 @@ ala_activeStudents_2223_eoy            a
   left join ala_testScore i on i.studentID = a.studentID and i.testName = 'FAST Math' and i.date between '2023-04-01' and '2023-06-30' and i.AL = '1'
 
   left join ala_activeStudents j on j.studentID = a.studentID and j.grade = a.grade --To determine if grade last year = grade this year
-  inner join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 2 Match
-  inner join ala_survey3demo2223 l on l.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 3 Match
+  inner join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = a.entityID and k.school = b.[calendar-id] -- Survey 2 Match
+  inner join ala_survey3demo2223 l on l.FLEID = a.fleID and l.school = a.entityID and k.school = b.[calendar-id] -- Survey 3 Match
   left join StudentAbs sa4 on sa4.studentID = a.studentID and sa4.StudentAbs = 1
 group by
 a.studentID,
@@ -133,8 +133,8 @@ from
   left join ala_testScore i on i.studentID = a.studentID and i.testName = 'FAST Math' and i.date between '2023-04-01' and '2023-06-30' and i.AL = '1'
 
   left join ala_activeStudents j on j.studentID = a.studentID and j.grade = a.grade --To determine if grade last year = grade this year
-  inner join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 2 Match
-  inner join ala_survey3demo2223 l on l.FLEID = a.fleID and k.school = b.[calendar-id] -- Survey 3 Match
+  inner join ala_survey2demo2223 k on k.FLEID = a.fleID and k.school = a.entityID and k.school = b.[calendar-id] -- Survey 2 Match
+  inner join ala_survey3demo2223 l on l.FLEID = a.fleID and k.school = a.entityID and k.school = b.[calendar-id] -- Survey 3 Match
   --left join StudentAbs2 sa3 on sa3.entityID = a.entityID and sa3.grade = a.grade
   left join StudentAbs sa4 on sa4.studentID = a.studentID and sa4.StudentAbs = 1
   left join TwoorMore sa5 on sa5.studentID = a.studentID AND sa5.Two = 1
@@ -149,7 +149,7 @@ from
 
 
 group by
-  --a.studentID,
+  --a.studentID
   --a.otherID,
   --a.fleID,
   --a.ell,
