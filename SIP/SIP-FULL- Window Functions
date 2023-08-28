@@ -90,11 +90,11 @@ select distinct
   --a.fleID,
   --a.ell,
   --a.raceDescription,
-  --a.priExcep,
-  a.entityID,
+    a.entityID,
+   -- a.priExcep,
   --k.school,
   --l.school,
-  a.grade,
+    a.grade,
   --b.[withdrawal-date],
 
   --sum(distinct b.[attendance-days]) as 'att',  -- start part a.early warning
@@ -140,10 +140,10 @@ from
   left join TwoorMore sa5 on sa5.studentID = a.studentID AND sa5.Two = 1
  where
   a.grade not in ('P0','P3','P1','P2','P4','GD','30','31')
-  and a.entityID = k.school  -- Survey 2 Match
-  and a.entityID = l.school -- Survey 3 Match
+  and a.entityID = k.school and k.school = b.[calendar-id] -- Survey 2 Match
+  and a.entityID = l.school and k.school = b.[calendar-id] -- Survey 3 Match
   --and a.otherID = 374635  -- Test Student
-  and a.entityID = '0431'
+  --and a.entityID = '0431'
 
 
 
@@ -154,12 +154,12 @@ group by
   --a.fleID,
   --a.ell,
   --a.raceDescription,
-  --a.priExcep,
-  a.entityID,
+    a.entityID,
+    --a.priExcep,
   --k.school,
   --l.school,
-  a.grade
+    a.grade
   --b.[withdrawal-date]
 
---having 
+ --having 
  --sum(distinct b.[attendance-days]+b.[absence-days]) IS NOT NULL;
