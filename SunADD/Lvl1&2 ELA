@@ -1,0 +1,53 @@
+--Brad AUG 2023
+--Shows number lvl1 and 2, total students, %% of lvl1 and 2
+;with lvl1 as
+(select
+a.grade,
+sum(count(a.studentID)) OVER (PARTITION BY a.grade) as '# of Students'
+from 
+ala_testScore	a
+where
+a.testName = 'FAST ELA PM3'
+and a.AL in(1,2)
+and a.grade <11
+
+group by
+a.grade
+),
+allstudent as (
+select
+a.grade,
+sum(count(a.studentID)) OVER (PARTITION BY a.grade) as '# of all Students'
+from 
+ala_testScore	a
+where
+a.testName = 'FAST ELA PM3'
+and a.grade <11
+group by
+a.grade
+),
+temp as (
+select
+a.grade,
+sum(sum(a.[# of Students])) OVER (PARTITION BY a.grade) as '#ofStudents',
+sum(sum(b.[# of all Students])) OVER (PARTITION BY a.grade) '#ofallStudents',
+sum(sum(a.[# of Students])/SUM(b.[# of all Students])) OVER (PARTITION BY a.grade)
+as 'All Students' 
+
+from 
+lvl1	a
+join allstudent	b on b.grade = a.grade
+group by
+a.grade
+)
+select
+a.grade,
+sum(a.#ofStudents) as 'Totallvl1and2',
+sum(a.#ofallStudents) as 'TotalallStudents',
+(CAST(a.#ofStudents as float)/NULLIF(a.#ofallStudents,0))*100.0 as 'Percent Lvl 1 & 2'
+from
+temp	a
+group by
+a.grade,
+a.#ofallStudents,
+a.#ofStudents
