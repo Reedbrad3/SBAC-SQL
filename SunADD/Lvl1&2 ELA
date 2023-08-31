@@ -3,7 +3,8 @@
 ;with lvl1 as
 (select
 a.grade,
-sum(count(a.studentID)) OVER (PARTITION BY a.grade) as '# of Students'
+a.AL,
+sum(count(a.studentID)) OVER (PARTITION BY a.grade,a.AL) as '# of Students'
 from 
 ala_testScore	a
 where
@@ -12,7 +13,8 @@ and a.AL in(1,2)
 and a.grade <11
 
 group by
-a.grade
+a.grade,
+a.AL
 ),
 allstudent as (
 select
@@ -29,8 +31,9 @@ a.grade
 temp as (
 select
 a.grade,
-sum(sum(a.[# of Students])) OVER (PARTITION BY a.grade) as '#ofStudents',
-sum(sum(b.[# of all Students])) OVER (PARTITION BY a.grade) '#ofallStudents',
+a.AL,
+sum(sum(a.[# of Students])) OVER (PARTITION BY a.grade,a.AL) as '#ofStudents',
+sum(sum(b.[# of all Students])) OVER (PARTITION BY a.grade,a.AL) '#ofallStudents',
 sum(sum(a.[# of Students])/SUM(b.[# of all Students])) OVER (PARTITION BY a.grade)
 as 'All Students' 
 
@@ -38,10 +41,12 @@ from
 lvl1	a
 join allstudent	b on b.grade = a.grade
 group by
-a.grade
+a.grade,
+a.AL
 )
 select
 a.grade,
+a.AL,
 sum(a.#ofStudents) as 'Totallvl1and2',
 sum(a.#ofallStudents) as 'TotalallStudents',
 (CAST(a.#ofStudents as float)/NULLIF(a.#ofallStudents,0))*100.0 as 'Percent Lvl 1 & 2'
@@ -49,5 +54,8 @@ from
 temp	a
 group by
 a.grade,
+a.AL,
 a.#ofallStudents,
 a.#ofStudents
+order by
+1,2
