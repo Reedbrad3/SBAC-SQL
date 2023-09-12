@@ -1,0 +1,40 @@
+-- Calculates fast test score for each student and the associated teacher for grades 3-5
+
+select
+
+a.otherID,
+a.lastName,
+a.firstName,
+b.testName,
+d.tchrLastName,
+d.tchrFirstName,
+--d.courseName,
+--d.dept,
+--d.subject,
+max(CAST(b.SS as int)) as 'SS',
+max(CAST(b.AL as int)) as 'AL'
+
+from 
+ala_activeStudents	a
+join ala_testScore b on b.studentID = a.studentID
+join ala_activeStudents_2223_eoy c on c.studentID = a.studentID
+join ala_roster_history d on d.studentID = a.studentID and d.schoolYear = 2023 
+
+where
+b.testName in ('FAST ELA PM3','FAST MATH')
+and c.grade in ('03','04','05')
+and d.dept in ('MAT','LA')
+
+group by
+a.otherID,
+a.lastName,
+a.firstName,
+b.testName,
+d.tchrLastName,
+d.tchrFirstName
+--d.courseName,
+--d.subject,
+--d.dept
+
+order by
+5,6,1
