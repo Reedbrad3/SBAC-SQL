@@ -1,0 +1,36 @@
+-- Adds PM numbers to Math scores
+-- Allows you to get a clean sheet of scores by student
+
+UPDATE ala_testScore
+	set testName = 'FAST Math PM1'
+	where testName = 'FAST Math' and date < '2022-10-01';
+UPDATE ala_testScore
+	set testName = 'FAST Math PM2'
+	where testName = 'FAST Math' and Date between '2022-10-02' and '2023-03-05';
+UPDATE ala_testScore
+	set testName = 'Fast Math PM3'
+	where testName = 'FAST Math' and date > '2023-03-06';
+
+
+select *
+from 
+( Select
+a.otherID,
+c.entityName,
+b.grade as 'PY Grade',
+c.priExcep,
+a.testName,
+a.SS--,
+--a.AL
+From
+ala_testScore a
+Join ala_activeStudents_2223_eoy b on b.studentID = a.studentID
+Join ala_activeStudents c on c.studentID = a.studentID
+Where
+b.grade in ('KG','01','02','03','04','05')
+And a.testName in ('FAST ELA PM1','FAST ELA PM2','FAST ELA PM3','FAST Math PM1','FAST Math PM2','FAST Math PM3')
+--Order by
+--2,1
+) as src
+
+PIVOT(max(SS) for testName in ([FAST ELA PM1],[FAST ELA PM2],[FAST ELA PM3],[FAST Math PM1],[FAST Math PM2],[FAST Math PM3])) as PivotTest
