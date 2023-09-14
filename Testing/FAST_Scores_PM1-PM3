@@ -16,7 +16,7 @@ select *
 from 
 ( Select
 a.otherID,
-c.entityName,
+c.entityName as 'Current School',
 b.grade as 'PY Grade',
 c.priExcep,
 a.testName,
