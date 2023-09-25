@@ -1,0 +1,47 @@
+# -*- coding: utf-8 -*-
+#Python code to get offense counts by month
+import pyodbc
+import pandas as pd
+
+cnxc = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=64.132.91.21,1433;DATABASE=skyward_STU;UID=reedbj;PWD=Y4poCfVIPsCVvk');
+
+cursor = cnxc.cursor()
+
+sql_query = 'SELECT * FROM ala_behavior WHERE entityID = ? and disOffenseDesc in (?,?,?,?)'
+entityID = "0141"
+code =  ("SIMPLE BATTERY-PHYS ATTACK","AGGRAVATED BATTERY","FIGHTING-MINOR","FIGHTING-SERIOUS MUTUAL ALTERC")
+row = pd.read_sql(sql_query, cnxc, params=(entityID,)+ code)
+
+
+cnxc.close()   
+
+import matplotlib.pyplot as plt
+
+row['offenseDate'] = pd.to_datetime(row['offenseDate'])
+
+# Group by year, week, and count the occurrences of categories
+week_counts = row.groupby([row["offenseDate"].dt.year, row["offenseDate"].dt.month])['disOffenseDesc'].count()
+
+# Extract the year-week values as strings
+week_labels = [f'{month:02}-{year%100:02}' for (year, month) in week_counts.index]
+
+# Plot the line graph
+plt.figure(figsize=(10, 6))
+
+# Plot the category counts by week
+plt.plot(week_labels, week_counts.values, label="Offense Counts")
+
+# Add labels and legend
+plt.xlabel("Year-Month")
+plt.ylabel("Count")
+plt.title("Fight Counts by Month - Year")
+
+plt.legend(loc="upper left")
+
+# Show the plot
+plt.grid(True)
+plt.tight_layout()
+plt.xticks(week_labels[::4],rotation=0)  # Rotate x-axis labels for better readability
+ex = "SIMPLE BATTERY-PHYS ATTACK","AGGRAVATED BATTERY","FIGHTING-MINOR","FIGHTING-SERIOUS MUTUAL ALTERC"
+plt.text(.5,-.1, ex, ha = 'center',va='center',transform=plt.gca().transAxes)
+plt.show()
