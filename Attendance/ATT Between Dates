@@ -1,18 +1,23 @@
 --Attendance between two dates (Start of Year and X)
 -- Does not include 0 recorded School days
 
+declare @year      int  = 2023
+declare @startDate date = '2022-09-01'
+declare @endDate   date = '2022-09-30'
+
+
 declare @table table
   (
-    entityID   varchar(4),
-    studentID  int,
-    otherID    varchar(10),
-    lastName   varchar(30),
-    firstName  varchar(30),
-    grade      varchar(2),
-    entryDate  date,
-    wdDate     date,
-    absences   int,
-    schlDays   int
+    entityID  varchar(4),
+    studentID int,
+    otherID   varchar(10),
+    lastName  varchar(30),
+    firstName varchar(30),
+    grade     varchar(2),
+    entryDate date,
+    wdDate    date,
+    absences  int,
+    schlDays  int
   )
 
 insert into
@@ -25,80 +30,82 @@ select distinct
   n.[first-name],
   g.grade,
   cast(ew.[ew-date] as date),
-  cast(coalesce(dateadd(DD, 1,ew.[withdrawal-date]),'2022-08-10') as date),
+  cast(ew.[withdrawal-date] as date),
 
+  -- absences
   (select
      count(distinct [date])
    from
      ala_attendanceDaily
    where
-     schoolYear = 2023
+     schoolYear = @year
      and studentID = ew.[student-id]
      and entityID = ew.[entity-id]
-     and [date] between cast(ew.[ew-date] as date) and cast(coalesce(dateadd(DD, 1,ew.[withdrawal-date]),dateadd(DD,-1,'2022-05-31')) as date)
-
-     and dayStatus not in ('D','O','E','P','U','Y')),
+     and [date] between @startDate and @endDate
+     and category = 'U')
+	 ,
  
-    (select
-       count(distinct [cal-date])
-     from
-       [calendar-day]
-     where
-       [entity-id] = ew.[entity-id]
-       and [cal-days] = 1.00
-
-     --and [cal-date] between cast(ew.[ew-date] as date) and cast(coalesce(dateadd(DD, 1,ew.[withdrawal-date]),getdate()) as date))
-
-     --ADD 1 DAY TO WD DATE TO MATCH SKYWARD AND SUBTRACT 1 DAY FROM GETDATE SO IT DOESN'T COUNT TODAY WHEN ATT ISN'T UPDATED
-       and [cal-date] between cast(ew.[ew-date] as date) and cast(coalesce(dateadd(DD, 1,ew.[withdrawal-date]),dateadd(DD,-1,'2022-05-31')) as date))
+  -- school days
+  (select
+     count(distinct [cal-date])
+   from
+     [calendar-day]
+   where
+     [entity-id] = ew.[entity-id]
+     and [cal-days] = 1.00
+-- during that month
+and [cal-date] between @startDate and @endDate
+-- between enrollment dates
+and cast([cal-date] as date) between cast(ew.[ew-date] as date) and cast(ew.[withdrawal-date] as date))
 
 from
   [student-ew]           ew
   join student            s on s.[student-id] = ew.[student-id]
   join [name]             n on n.[name-id] = s.[name-id]
-  join [student-entity]   e on e.[student-id] = ew.[student-id]
-  join [ent-grd-gy-xref]  g on g.[school-year] = 2023 and g.[grad-yr] = cast(ew.[withdrawal-grad-yr] as int)
+  join [student-entity]   e on e.[student-id] = ew.[student-id] and e.[entity-id] = ew.[entity-id]
+  join [ent-grd-gy-xref]  g on g.[school-year] = @year and g.[grad-yr] = cast(ew.[withdrawal-grad-yr] as int)
 where
-  ew.[withdrawal-school-year] in (0,2023)
-  and ew.[entity-id] = '0431'
+  ew.[withdrawal-school-year] = @year
+  and ew.[x-withdrawal-default-entity] = 1
   and ew.[withdrawal-code] <> 'DNE'
-  and e.[x-default-entity] = 1
+  and ew.[entity-id] < '0600'
+  and ew.[entity-id] not in ('0082','0400')
+--and ew.[entity-id] = '0431'
 
 --select * from @table
 
 select distinct
-  otherID,
-  studentID,
-  entityID,
-  lastName,
-  firstName,
-  grade,
-  absences,
-  schlDays,
+  t.entityID,
+  t.otherID,
+  t.schlDays,
+  t.absences,
+  s.[school-name] as 'entityName',
+--t.grade,
 
-  case
-    when sum(absences) = 0 then 0
+case
+  when sum(t.absences) = 0 or sum(t.schlDays) = 0 then 0
   else
-    round((cast(sum(absences) as float) / cast(sum(schlDays) as float) * 100),2)
-  end as 'absPct',
+      round((cast(sum(t.absences) as float) / NULLIF(cast(sum(t.schlDays) as float), 0) * 100), 2)
+end as 'absPct',
 
-  case
-    when sum(absences) = 0 then 100
+case
+  when sum(t.absences) = 0 then 100
   else
-    100 - round((cast(sum(absences) as float) / cast(sum(schlDays) as float) * 100),2)
-  end as 'attPct'
+    100 - round((cast(sum(t.absences) as float) / NULLIF(cast(sum(t.schlDays) as float), 0) * 100), 2)
+end as 'attPct'
 
 from
-  @table
-where
-schlDays <> '0'
+  @table      t
+  join school s on s.[school-id] = t.entityID
 
 group by
-  otherID,
-  studentID,
-  entityID,
-  lastName,
-  firstName,
-  grade,
-  absences,
-  schlDays
+  t.entityID,
+  t.otherID,
+  t.schlDays,
+  t.absences,
+  s.[school-name]
+--grade
+having
+schlDays <> 0
+order by
+  1,3
