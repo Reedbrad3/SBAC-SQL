@@ -61,7 +61,7 @@ where
   ew.[withdrawal-school-year] in (0,2024)
   and e.[x-default-entity] = 1
   and ew.[withdrawal-code] <> 'DNE'
-  and ew.[entity-id]  in ('0071','0101','0161','0281','0311','0321','0341')
+--and ew.[entity-id]  in ('0071','0101','0161','0281','0311','0321','0341')
   and grade not in ('P2','P3','P4')
 --select * from @table
 
@@ -69,11 +69,19 @@ select distinct
   t.entityID,
   s.[school-name] as 'entityName',
   t.grade,
+  
+  case 
+  when entityID in('0031','0041','0091','0111','0171','0331','0482','0501','0510','0520','0531','0541','0561','0571') then 'Elementary non-SI'
+  when entityID in ('0071','0101','0161','0281','0311','0321','0341') then 'Elementary - SI'
+  when entityID in('0112','0121','0141','0221','0481','0461','0502','0591') then 'Middle'
+  when entityID in ('0151','0201','0261','0271','0411','0421','0431') then 'High'
+
+  end as 'level',
 
   case
     when sum(t.absences) = 0 then 0
   else
-          round((cast(sum(t.absences) as float) / cast(sum(t.schlDays) as float) * 100),2)
+         round((cast(sum(t.absences) as float) / cast(sum(t.schlDays) as float) * 100),2)
   end as 'absPct',
 
   case
@@ -85,9 +93,12 @@ select distinct
 from
   @table      t
   join school s on s.[school-id] = t.entityID
+where
+t.schlDays > 0 
 group by
   t.entityID,
   s.[school-name],
   grade
+
 order by
   4
