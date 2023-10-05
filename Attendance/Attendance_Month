@@ -27,6 +27,7 @@ select distinct
   cast(ew.[ew-date] as date),
   cast(coalesce(dateadd(DD, 1,ew.[withdrawal-date]),getdate()) as date),
 
+
   (select
      count(distinct [date])
    from
@@ -61,14 +62,17 @@ where
   ew.[withdrawal-school-year] in (0,2024)
   and e.[x-default-entity] = 1
   and ew.[withdrawal-code] <> 'DNE'
---and ew.[entity-id]  in ('0071','0101','0161','0281','0311','0321','0341')
+--and ew.[entity-id]  in ('0071')--,'0101','0161','0281','0311','0321','0341')
   and grade not in ('P2','P3','P4')
 --select * from @table
+
 
 select distinct
   t.entityID,
   s.[school-name] as 'entityName',
   t.grade,
+  sum(t.absences) as ' Absences',
+  sum(t.schlDays) as 'SchlDays',
   
   case 
   when entityID in('0031','0041','0091','0111','0171','0331','0482','0501','0510','0520','0531','0541','0561','0571') then 'Elementary non-SI'
@@ -96,9 +100,11 @@ from
 where
 t.schlDays > 0 
 group by
-  t.entityID,
+ t.entityID,
   s.[school-name],
   grade
 
 order by
   4
+
+
