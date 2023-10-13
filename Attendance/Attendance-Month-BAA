@@ -1,0 +1,116 @@
+declare @startDate date = '2023-09-01'
+declare @endDate   date = '2023-09-30'
+
+declare @table table
+  (
+    entityID  varchar(4),
+    studentID int,
+    otherID   varchar(10),
+    lastName  varchar(30),
+    firstName varchar(30),
+    grade     varchar(2),
+	race	  varchar(10),
+    entryDate date,
+    wdDate    date,
+    absences  int,
+    schlDays  int
+  )
+
+insert into
+  @table
+select distinct
+  ew.[entity-id],
+  ew.[student-id],
+  s.[other-id],
+  n.[last-name],
+  n.[first-name],
+  g.grade,
+    n.[race-code],
+  cast(ew.[ew-date] as date),
+  cast(coalesce(dateadd(DD, 1,ew.[withdrawal-date]),getdate()) as date),
+
+
+  (select
+     count(distinct [date])
+   from
+     ala_attendanceDaily
+   where
+     schoolYear = 2024
+     and studentID = ew.[student-id]
+     and entityID = ew.[entity-id]
+	 and race = 'B'
+     and [date] between @startDate and @endDate
+     and category = 'U'
+	 and grade not in ('P2','P3','P4')),
+	
+ 
+  (select
+     count(distinct [cal-date])
+   from
+     [calendar-day]
+   where
+     [entity-id] = ew.[entity-id]
+	
+     and [cal-days] = 1.00
+and [cal-date] between @startDate and @endDate
+   --add 1 day to wd date to match skyward and subtract 1 day from getdate so it doesnt count today when att isnt updated
+     and [cal-date] between cast(ew.[ew-date] as date) and cast(coalesce(dateadd(DD, 1,ew.[withdrawal-date]),dateadd(DD,-1,getdate())) as date))
+
+from
+  [student-ew]           ew
+  join student            s on s.[student-id] = ew.[student-id]
+  join [name]             n on n.[name-id] = s.[name-id]
+  join [student-entity]   e on e.[student-id] = ew.[student-id] and e.[entity-id] = ew.[entity-id]
+  join [ent-grd-gy-xref]  g on g.[school-year] = 2024 and g.[grad-yr] = cast(ew.[withdrawal-grad-yr] as int)
+where
+  ew.[withdrawal-school-year] in (0,2024)
+  and e.[x-default-entity] = 1
+  and ew.[withdrawal-code] <> 'DNE'
+  and n.[race-code] = 'B'
+--and ew.[entity-id]  in ('0071')--,'0101','0161','0281','0311','0321','0341')
+  and grade not in ('P2','P3','P4')
+--select * from @table
+
+
+select distinct
+  t.entityID,
+  s.[school-name] as 'entityName',
+  t.grade,
+  t.race,
+  sum(t.absences) as ' Absences',
+  sum(t.schlDays) as 'SchlDays',
+  
+  case 
+  when entityID in('0031','0041','0091','0111','0171','0331','0482','0501','0510','0520','0531','0541','0561','0571') then 'Elementary non-SI'
+  when entityID in ('0071','0101','0161','0281','0311','0321','0341') then 'Elementary - SI'
+  when entityID in('0112','0121','0141','0221','0481','0461','0502','0591') then 'Middle'
+  when entityID in ('0151','0201','0261','0271','0411','0421','0431') then 'High'
+
+  end as 'level',
+
+  case
+    when sum(t.absences) = 0 then 0
+  else
+         round((cast(sum(t.absences) as float) / cast(sum(t.schlDays) as float) * 100),2)
+  end as 'absPct',
+
+  case
+    when sum(t.absences) = 0 then 100
+  else
+    100 - round((cast(sum(t.absences) as float) / cast(sum(t.schlDays) as float) * 100),2)
+  end as 'attPct'
+
+from
+  @table      t
+  join school s on s.[school-id] = t.entityID
+where
+t.schlDays > 0 
+and t.race = 'B'
+group by
+ t.entityID,
+  s.[school-name],
+  grade,
+  race
+
+order by
+  4
